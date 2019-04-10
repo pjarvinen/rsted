@@ -1,4 +1,4 @@
-`A-plus <https://github.com/Aalto-LeTech/a-plus>` LMS course material editor. Based on a simple online `editor <https://github.com/anru/rsted>` for reStructuredText on Flask.
+A-plus https://github.com/Aalto-LeTech/a-plus LMS course material editor based on a simple online editor https://github.com/anru/rsted for reStructuredText on Flask.
 
 This is a group work for TIEA4 & TIETS19 courses at Tampere University in Finland.
 
