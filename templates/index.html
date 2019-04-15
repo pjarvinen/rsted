@@ -2,15 +2,22 @@
 
 {% block head %}
     {{ super() }}
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}markit/jquery.markitup.js"></script>
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}markit/sets/rest/set.js"></script>
+    <!-- markItUp! skin -->
+    <link rel="stylesheet" href="{{ request.script_root }}{{ MEDIA_URL }}markitup/skins/markitup/style.css" />
+    <!--  markItUp! toolbar skin -->
+    <link rel="stylesheet" href="{{ request.script_root }}{{ MEDIA_URL }}markitup/sets/default/style.css" />
+    <!-- markItUp! -->
+    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}markitup/jquery.markitup.js"></script>
+    <!-- markItUp! toolbar settings -->
+    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}markitup/sets/default/set.js"></script>
+    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/file-manager/file-manager.js"></script>
+    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/gitlab-rest/gitlab-rest.js"></script>
+    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/html-preview/html-preview.js"></script>
+    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/plussa-gui-setup.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="{{ request.script_root }}{{ MEDIA_URL }}markit/skins/simple/style.css" />
-    <link rel="stylesheet" type="text/css" href="{{ request.script_root }}{{ MEDIA_URL }}markit/sets/rest/style.css" />
+    <!--script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}scripts/editor.js"></script-->
 
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}scripts/editor.js"></script>
-
-<script type="text/javascript">
+<!--script type="text/javascript">
     var js_params = {{ js_params|tojson|safe }};
 	$(function() {
 	    if (js_params.theme) {
@@ -22,7 +29,7 @@
 	    }
 	});
 
-</script>
+</script-->
 
 {% endblock %}
 
@@ -30,25 +37,13 @@
 {% block content %}
 <div class="b_page_cont">
     <div class="b_page_left">
-        <textarea id="editor" rows="15" name="rst" form="save_as_pdf">{{ rst }}</textarea>
+      <div id="fileTree"></div>
+        <!--textarea id="editor" rows="15" name="rst" form="save_as_pdf">{{ rst }}</textarea-->
     </div>
     <div class="b_page_right">
-        <div class="right_nav">
-            <div class="themes left" id="themes">Theme:
-                <input id="t_basic" type="radio" value="basic" checked="checked" name="style"/><label for="t_basic">Basic</label>
-                <input id="t_nature" type="radio" value="nature" name="style"/><label for="t_nature">Nature</label>
-            </div>
-        </div>
-        <div class="right">
-            <form id="save_as_pdf" method="POST" action="{{ request.script_root }}/srv/rst2pdf/">
-                <input type="submit" value="Export to PDF"/>
-                <input type="hidden" id="as_pdf_theme" name="theme"/>
-            </form>
-        </div>
-	    <iframe src="{{ request.script_root }}/srv/rst2html/" id="browse"></iframe>
+        <textarea id="markItUp" rows="15" name="rst" form="save_as_pdf">{{ rst }}</textarea>
+	    <!--iframe src="{{ request.script_root }}/srv/rst2html/" id="browse"></iframe-->
     </div>
-</div>
-
 </div>
 
 {% endblock %}

@@ -5,7 +5,7 @@
 
 .b_page_left {
     display: block;
-    width: 48.5%;
+    width: 12.5%;
 }
 
 .b_page_center {
@@ -15,7 +15,7 @@
 }
 
 .b_page_right {
-    margin-left: 50%;
+    margin-left: 14%;
     position: absolute;
     left: 0;
     right: 0;
