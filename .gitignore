@@ -8,3 +8,5 @@
 /var/run
 /run.sh
 /env
+
+/temp
