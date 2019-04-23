@@ -9,4 +9,5 @@
 /run.sh
 /env
 
-/temp
+/temp/*
+!/temp/.gitkeep
