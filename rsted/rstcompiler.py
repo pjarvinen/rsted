@@ -1,4 +1,4 @@
-import requests, StringIO, subprocess, os, sys, shutil
+import requests, StringIO, subprocess, os, sys, shutil, random
 from zipfile import ZipFile
 
 base_url = "https://gitlab.com/api/v4/projects/"
@@ -8,6 +8,7 @@ class RSTCompiler:
         self.project_id = project_id
         self.token = token
         self.filepath = filepath
+        self.dirpath = "temp/" + str(self.project_id) + "/"
     def download_archive(self):
         directory = "temp/" + self.project_id
         # Remove old project directory
@@ -24,7 +25,6 @@ class RSTCompiler:
                 namelist = zipObj.namelist()
                 zipObj.extractall("temp")
                 os.rename("temp/" + str(namelist[0])[:-1], "temp/" + str(self.project_id))
-                self.dirpath = "temp/" + str(self.project_id + "/")
                 return self.dirpath
         except:
             print("Unexpected error while extracting zip file: ", sys.exc_info()[0])
@@ -44,7 +44,15 @@ class RSTCompiler:
 
 
     def get_html(self):
-        full_path = self.dirpath + "_build/html/" + self.filepath;
+        if self.filepath.endswith(".rst"):
+            self.filepath = self.filepath[:-4] + ".html"
+        full_path = self.dirpath + "_build/html/" + self.filepath + "?" + str(random.randint(1,500))
         return full_path
         
+
+    def directory_exists(self):
+        if os.path.isdir("temp/" + str(self.project_id)):
+            return True
+        else:
+            return False
         
