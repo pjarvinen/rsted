@@ -17,19 +17,15 @@
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}scripts/preview.js"></script>
     <!--script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}scripts/editor.js"></script-->
 
-<!--script type="text/javascript">
+<script type="text/javascript">
     var js_params = {{ js_params|tojson|safe }};
 	$(function() {
-	    if (js_params.theme) {
-            reactForTheme(js_params.theme)
-	    }
-
 	    if (location.hash) {
             reactForRst(getDecodedHash())
 	    }
 	});
 
-</script-->
+</script>
 
 {% endblock %}
 
