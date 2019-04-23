@@ -5,6 +5,8 @@ from os.path import join as J
 #import codecs
 
 from docutils.core import publish_string
+from docutils import nodes
+from docutils.parsers.rst import Directive, directives
 
 #utf8codec = codecs.lookup('utf-8')
 

@@ -5,10 +5,11 @@ import os, sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-from flask import Flask, request, render_template, make_response, url_for
+from flask import Flask, request, render_template, make_response, url_for, send_from_directory
 
 from rsted.html import rst2html as _rst2html
 from rsted.pdf import rst2pdf as _rst2pdf
+from rsted.rstcompiler import RSTCompiler
 
 from flaskext.helpers import render_html
 
@@ -53,6 +54,23 @@ def rst2html():
         theme = None
     html = _rst2html(rst, theme=theme)
     return html
+
+@app.route('/srv/preview/', methods=['POST', 'GET'])
+def preview():
+    token = request.form.get('token', '')
+    project = request.form.get('project', '')
+    filepath = request.form.get('filepath', '')
+    if not token or not project or not filepath:
+        return ""
+    else:
+        compiler = RSTCompiler(project, token, filepath)
+        if compiler.download_archive():
+            compiler.compile_rst()
+            return compiler.get_html()
+
+@app.route('/temp/<path:filename>')
+def temp_projects(filename):
+    return send_from_directory(app.root_path + '/temp/', filename, conditional=True)
 
 @app.route('/srv/rst2pdf/', methods=['POST'])
 def rst2pdf():
