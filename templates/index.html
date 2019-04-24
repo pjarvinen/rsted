@@ -1,49 +1,78 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="fi">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>A-plus LMS course editor</title>
 
-{% block head %}
-    {{ super() }}
+    <link rel="stylesheet" href="{{ request.script_root }}{{ MEDIA_URL }}style/styles.css" />
+    <!-- jQuery File Tree CSS -->
+    <link rel="stylesheet" href="{{ request.script_root }}{{ MEDIA_URL }}filetree/css/jqueryFileTree.css" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ request.script_root }}{{ MEDIA_URL }}bootstrap/css/bootstrap.min.css" />
     <!-- markItUp! skin -->
     <link rel="stylesheet" href="{{ request.script_root }}{{ MEDIA_URL }}markitup/skins/markitup/style.css" />
     <!--  markItUp! toolbar skin -->
     <link rel="stylesheet" href="{{ request.script_root }}{{ MEDIA_URL }}markitup/sets/default/style.css" />
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <!-- Bootstrap -->
+    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- File Tree javascript -->
+    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}filetree/js/jquery.easing.js"></script>
+    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}filetree/js/jqueryFileTree.js"></script>
     <!-- markItUp! -->
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}markitup/jquery.markitup.js"></script>
     <!-- markItUp! toolbar settings -->
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}markitup/sets/default/set.js"></script>
+    <!-- Plussa GUI modules and setup script -->
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/file-manager/file-manager.js"></script>
+    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/file-tree-generator/file-tree-generator.js"></script>
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/gitlab-rest/gitlab-rest.js"></script>
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/html-preview/html-preview.js"></script>
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/plussa-gui-setup.js"></script>
-
-    <!--script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}scripts/editor.js"></script-->
-
-<!--script type="text/javascript">
-    var js_params = {{ js_params|tojson|safe }};
-	$(function() {
-	    if (js_params.theme) {
-            reactForTheme(js_params.theme)
-	    }
-
-	    if (location.hash) {
-            reactForRst(getDecodedHash())
-	    }
-	});
-
-</script-->
-
-{% endblock %}
-
-
-{% block content %}
-<div class="b_page_cont">
-    <div class="b_page_left">
-      <div id="fileTree"></div>
-        <!--textarea id="editor" rows="15" name="rst" form="save_as_pdf">{{ rst }}</textarea-->
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <h1>A-plus LMS course editor</h1>
+          <div id="plussaGuiReport"></div>
+          <form>
+            <input type="text" id="userId" placeholder="User Id" />
+            <input type="text" id="privateToken" placeholder="Private Token" />
+            <button type="button" class="btn btn-primary" id="plussaGuiLoadProjectsBtn">Load Projects</button>
+          </form>
+        </div>
+      </div>
     </div>
-    <div class="b_page_right">
-        <textarea id="markItUp" rows="15" name="rst" form="save_as_pdf">{{ rst }}</textarea>
-	    <!--iframe src="{{ request.script_root }}/srv/rst2html/" id="browse"></iframe-->
+    <!-- Two columns container with margin top (mt-1) class attribute -->
+    <div class="container-fluid mt-1">
+      <div class="row">
+        <div class="col-3">
+          <div id="fileTree"></div>
+        </div>
+        <div class="col-9">
+          <div class="row">
+            <div class="col">
+              <input type="text" id="plussaGuiFilePath" readonly="readonly" />
+              <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn" disabled="disabled">Save File</button>
+              <button type="button" class="btn btn-primary" id="plussaGuiNewFileBtn">New File</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <textarea id="markItUp" rows="15" name="rst" form="save_as_pdf"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <!--iframe id="browse"></iframe-->
+        </div>
+      </div>
     </div>
-</div>
-
-{% endblock %}
+  </body>
+</html>

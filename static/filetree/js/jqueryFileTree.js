@@ -48,26 +48,45 @@ if(jQuery) (function($){
 
 			$(this).each( function() {
 
+				/*
+				 * Modified for Plussa GUI purposes.
+				 * Initial folder list consists of user's A-plus projects and is delivered
+				 * into this plugin as a o.treeStructure parameter value. Subsequent
+				 * folder downloads and listings belong under each project folder.
+				 * The o.script parameter is used to direct handling of Ajax calls elsewhere.
+				 */
 				function showTree(c, t) {
-					//$(c).addClass('wait');
 					$(".jqueryFileTree.start").remove();
-					// Added PlussaGUI stuff
-					if( o.treeStructure == undefined ) {
-						$.post(o.script, { dir: t }, function(data) {
+					if( o.root != t ) {
+						$(c).addClass('wait');
+						o.script(c, t, function(data) {
 							$(c).find('.start').html('');
 							$(c).removeClass('wait').append(data);
-							if( o.root == t ) $(c).find('UL:hidden').show(); else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
+							$(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
 							bindTree(c);
 						});
 					}
 					else {
 						$(c).find('.start').html('');
-						//$(c).removeClass('wait').append(o.treeStructure);
 						$(c).append(o.treeStructure);
-						if( o.root == t ) $(c).find('UL:hidden').show(); else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
+						if( o.root == t ) $(c).find('UL:hidden').show();
 						bindTree(c);
 					}
 				}
+
+				/*
+				 * Original File Tree Plugin code commented out.
+				 *
+				function showTree(c, t) {
+					$(c).addClass('wait');
+					$(".jqueryFileTree.start").remove();
+					$.post(o.script, { dir: t }, function(data) {
+						$(c).find('.start').html('');
+						$(c).removeClass('wait').append(data);
+						if( o.root == t ) $(c).find('UL:hidden').show(); else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
+						bindTree(c);
+					});
+				}*/
 
 				function bindTree(t) {
 					$(t).find('LI A').bind(o.folderEvent, function() {
@@ -79,7 +98,10 @@ if(jQuery) (function($){
 									$(this).parent().parent().find('LI.directory').removeClass('expanded').addClass('collapsed');
 								}
 								$(this).parent().find('UL').remove(); // cleanup
-								showTree( $(this).parent(), escape($(this).attr('rel').match( /.*\// )) );
+								/* Modified code for Plussa GUI purposes. */
+								showTree( $(this).parent(), $(this).attr('rel') );
+								/* Original code commented out
+								showTree( $(this).parent(), escape($(this).attr('rel').match( /.*\// )) ); */
 								$(this).parent().removeClass('collapsed').addClass('expanded');
 							} else {
 								// Collapse
@@ -87,7 +109,10 @@ if(jQuery) (function($){
 								$(this).parent().removeClass('expanded').addClass('collapsed');
 							}
 						} else {
-							h($(this).attr('rel'));
+							/* Modified code for Plussa GUI purposes. */
+							h($(this));
+							/* Original code commented out
+							h($(this).attr('rel')); */
 						}
 						return false;
 					});

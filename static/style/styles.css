@@ -1,0 +1,34 @@
+#markItUp {
+  width: 100%;
+}
+
+/* iFrame for HTML preview */
+#browse {
+	border: 1px solid #CCC;
+	position: relative;
+	margin-top: 1px;
+	height: 330px;
+
+	width: 100%;
+	background-color: white;
+}
+
+.showLinkDialog {
+    height: 40px;
+    width: 400px;
+    border: 1px solid white;
+    background-color: #bcF;
+    -moz-border-radius: 3px;
+}
+
+.showLinkDialog .hider {
+    width: 100%;
+    height: 13px;
+    background: -moz-linear-gradient(-90deg, #BBCCFF, #103b67);
+    cursor: pointer;
+}
+
+
+.themes {
+    display: inline-block;
+}
