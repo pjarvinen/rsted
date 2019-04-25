@@ -15,16 +15,16 @@ var plussaGuiGitlabRest = (function() {
       // The URL for the request
       url: url,
       // The data to send (will be converted to a query string)
-      data: data,
+      data: JSON.stringify(data),
       // Whether this is a POST or GET request
       type: method,
       // The type of data we expect back
       dataType: "json",
-      // Additional header key-value pairs,
-      //contentType: "application/json",
-      //processData: false,
+      crossDomain: true,
+      contentType: "application/json",
+      processData: false,
+      // Additional header key-value pairs
       headers: {
-        "Content-Type": "application/json",
         "PRIVATE-TOKEN": privateToken
       }
     })
@@ -48,7 +48,7 @@ var plussaGuiGitlabRest = (function() {
       commit_message: message,
       actions: commitData
     }
-    //console.log("url: "+url+"\ntoken: "+plussaGuiGitlabRest.privateToken+"method: POST\ndata: "+JSON.stringify(data));
+    //console.log("url: "+url+"\ntoken: "+plussaGuiGitlabRest.privateToken+"\nmethod: POST\ndata: "+JSON.stringify(data));
     doRestQuery(url, plussaGuiGitlabRest.privateToken, "POST", data, callback);
   }
 
@@ -99,8 +99,13 @@ var plussaGuiGitlabRest = (function() {
 
   }
 
-  var deleteFile = function() {
-
+  var deleteFile = function(projectId, branch, path, callback) {
+    var commitData = [{
+      action: "delete",
+      file_path: path
+    }];
+    var message = "Deleted file: "+path;
+    doCommit(projectId, branch, message, commitData, callback);
   }
 
   var renameFolder = function() {
@@ -127,10 +132,3 @@ var plussaGuiGitlabRest = (function() {
 
   };
 })();
-
-$( document ).ready(function() {
-  plussaGuiGitlabRest.init({
-		baseUrl: plussaGuiSettings.baseRestUrl,
-    errorCallback: plussaGuiSettings.errorCallback
-	});
-});

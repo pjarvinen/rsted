@@ -1,7 +1,8 @@
 var plussaGuiSettings = {
 	baseRestUrl: "https://gitlab.com/api/v4/",
 	activeProjectId: 0,
-	activeFileMeta: {},
+	activeProjectMeta: false,
+	activeFileMeta: false,
 	errorCallback: function(status, errorThrown) {
 		$('#plussaGuiReport').text("Error: "+status);
 		console.log("ERROR!\n"+JSON.stringify(errorThrown));
@@ -10,9 +11,12 @@ var plussaGuiSettings = {
 
 
 $(document).ready(function(){
+	plussaGuiGitlabRest.init({
+		baseUrl: plussaGuiSettings.baseRestUrl,
+    errorCallback: plussaGuiSettings.errorCallback
+	});
 	/* File tree structure for GUI design at startup. Remove comment slashes when necessary. */
-	$('#fileTree').fileTree({ treeStructure: plussaGuiFileTreeGenerator.test(), script: fileTreeScript }, function(linkNode) { });
-	$("#plussaGuiFilePath").val("");
+	//$('#fileTree').fileTree({ treeStructure: plussaGuiFileTreeGenerator.test(), script: fileTreeScript }, function(linkNode) { });
 	$("#markItUp").val("");
   // Setup markItUp! a javascript text editor
 	$('#markItUp').markItUp(markItUpSettings);
@@ -27,6 +31,33 @@ $(document).ready(function(){
 			node = $(node).parent();
 		}
 		return $(node).parent().attr('id').split('-')[1];
+	}
+
+	var explodeFilePath = function(filePath) {
+    var lastIndexOfSlash = filePath.lastIndexOf('/');
+    if(lastIndexOfSlash != -1) {
+      return [filePath.substring(0, lastIndexOfSlash), filePath.substring(lastIndexOfSlash, filePath.length-1)];
+    }
+    else {
+      return false;
+    }
+  }
+
+	var updateFilePathRibbon = function(folder) {
+		$("#plussaGuiProjectName").text(plussaGuiFileManager.getProjectMetaData(plussaGuiSettings.activeProjectId).name+": ");
+		if(plussaGuiSettings.activeFileMeta.id) {
+			//var pathInfo = explodeFilePath(plussaGuiSettings.activeFileMeta.path);
+			$("#plussaGuiFolderPath").text(plussaGuiSettings.activeFileMeta.path);
+			//$("#plussaGuiFilePath").text("");
+		}
+		else {
+			if(folder != undefined) {
+				$("#plussaGuiFolderPath").text(folder);
+			}
+			else {
+				$("#plussaGuiFolderPath").text("");
+			}
+		}
 	}
 
 	/* Function that jQuery File Tree Plugin calls replacing the original
@@ -47,6 +78,7 @@ $(document).ready(function(){
 			projectId = getActiveProjectId(node);
 		}
 		plussaGuiSettings.activeProjectId = projectId;
+		plussaGuiSettings.activeProjectMeta = plussaGuiFileManager.getProjectMetaData(projectId);
 		var fileTreeJSON = {};
 		if(isProjectRoot) {
 			// If the project root folder is already loaded generate the file tree.
@@ -61,7 +93,7 @@ $(document).ready(function(){
 					console.log("Loaded one project: "+"\nid: "+projectId+"\n"+JSON.stringify(result));
 				});
 			}
-			$("#plussaGuiFilePath").val("");
+			updateFilePathRibbon();
 		}
 		// Not a project root folder, load a project sub folder if not already loaded.
 		else {
@@ -76,7 +108,7 @@ $(document).ready(function(){
 					console.log("Loaded folder path: "+path+"\nfrom project: "+projectId);
 				});
 			}
-			$("#plussaGuiFilePath").val(path);
+			updateFilePathRibbon(path);
 		}
 		//$("#plussaGuiProjectName").text(plussaGuiFileManager.getProjectMetaData(projectId).name+": ");
 	};
@@ -96,18 +128,9 @@ $(document).ready(function(){
 				$('#fileTree').fileTree({ treeStructure: fileTreeHTML, script: fileTreeScript }, function(linkNode) {
 					// Callback function for implementing file download after click events of file name links.
 					var filePath = $(linkNode).attr('rel');
-					var lastIndexOfSlash = filePath.lastIndexOf('/');
-					var folderPath = "";
-					if(lastIndexOfSlash != -1) {
-						folderPath = filePath.substring(0, lastIndexOfSlash);
-					}
-					else {
-						folderPath = filePath;
-					}
-					var fileName = $(linkNode).text();
 					var projectId = getActiveProjectId(linkNode);
-					//console.log("file path: "+filePath+"\nfolder path: "+folderPath+"\nfile name: "+fileName+"\nproject id: "+projectId);
-					var fileMeta = plussaGuiFileManager.getFileMetaData(projectId, folderPath, fileName);
+					console.log("file path: "+filePath+"\nproject id: "+projectId);
+					var fileMeta = plussaGuiFileManager.getFileMetaData(projectId, filePath);
 					if(fileMeta) {
 						var content = plussaGuiFileManager.isFileLoaded(fileMeta.id);
 						/* If file is already loaded, get the contents. Updates are stored
@@ -120,11 +143,11 @@ $(document).ready(function(){
 							plussaGuiGitlabRest.loadFile(projectId, fileMeta.id, function(result) {
 								plussaGuiFileManager.saveFileJSON(result);
 								$('#markItUp').val(atob(result.content));
-								console.log("Loaded "+filePath+" from REST APi.");
+								console.log("Loaded "+filePath+" from REST API.");
 							});
 						}
 						plussaGuiSettings.activeFileMeta = fileMeta;
-						$("#plussaGuiFilePath").val(filePath);
+						updateFilePathRibbon(filePath.path);
 						//$("#plussaGuiProjectName").text(plussaGuiFileManager.getProjectMetaData(projectId).name+": ");
 					}
 					else {
@@ -137,37 +160,66 @@ $(document).ready(function(){
 	});
 
 	$("#plussaGuiSaveFileBtn").click(function() {
-		var projectMeta = plussaGuiFileManager.getProjectMetaData(plussaGuiSettings.activeProjectId);
+		var projectMeta = plussaGuiSettings.activeProjectMeta;//plussaGuiFileManager.getProjectMetaData(plussaGuiSettings.activeProjectId);
 		var content = plussaGuiFileManager.isFileLoaded(plussaGuiSettings.activeFileMeta.id);
+		var path = $("#plussaGuiFolderPath").text();
 		/* Check if it is an update. */
 		if(content) {
 			// TODO: Check if contents have truly been altered and only after that proceed with the update.
-			console.log("Update file.\n"+ JSON.stringify(plussaGuiSettings.activeFileMeta));
+			console.log("Update file.");
+
 		}
 		/* Save a new file. */
 		else {
 			console.log("Create file.");
-			var path = $("#plussaGuiFilePath").val();
+			// Check if the file is to be saved into the project root folder.
 			if(path.length == 0) {
 				path = $("#plussaGuiFileNameInput").val();
 			}
 			else {
 				path += "/" + $("#plussaGuiFileNameInput").val();
 			}
-			var branch = plussaGuiFileManager.getProjectMetaData(plussaGuiSettings.activeProjectId).default_branch;
-			//console.log("projectId: "+plussaGuiSettings.activeProjectId+"\nbranch: "+branch+"\npath: "+path+"\ncontent: "+$("#markItUp").val());
-			plussaGuiGitlabRest.newFile(plussaGuiSettings.activeProjectId, branch, path, $("#markItUp").val(), function(result) {
+			var branch = projectMeta.default_branch;//plussaGuiFileManager.getProjectMetaData(plussaGuiSettings.activeProjectId).default_branch;
+			console.log("projectId: "+projectMeta.id+"\nbranch: "+projectMeta.default_branch+"\npath: "+path+"\ncontent: "+$("#markItUp").val());
+			/*plussaGuiGitlabRest.newFile(plussaGuiSettings.activeProjectId, branch, path, $("#markItUp").val(), function(result) {
 				console.log(JSON.stringify(result));
-			});
+				//plussaGuiSettings.activeFileMeta = plussaGuiFileManager.getFileMetaData()
+			});*/
 		}
 		$("#plussaGuiFileNameInput").css("display", "none");
-		$("#plussaGuiFilePath").val(path);
+		updateFilePathRibbon(path);
 	});
 
 	$("#plussaGuiNewFileBtn").click(function() {
-		plussaGuiSettings.activeFileMeta = {};
 		$("#markItUp").val("");
+		$("#plussaGuiFileNameInput").val("");
 		$("#plussaGuiFileNameInput").css("display", "inline");
+		if(plussaGuiSettings.activeFileMeta) {
+			plussaGuiSettings.activeFileMeta = false;
+			var pathInfo = explodeFilePath($("#plussaGuiFolderPath").text());
+			if(pathInfo) {
+				$("#plussaGuiFolderPath").text(pathInfo[0]);
+			}
+			else {
+				$("#plussaGuiFolderPath").text("");
+			}
+		}
+	});
+
+	$("#plussaGuiDeleteFileBtn").click(function() {
+		var branch = plussaGuiFileManager.getProjectMetaData(plussaGuiSettings.activeProjectId).default_branch;
+		var path = $("#plussaGuiFilePath").val();
+		plussaGuiGitlabRest.deleteFile(plussaGuiSettings.activeProjectId, branch, path, function(result) {
+			plussaGuiFileManager.updateAfterFileDelete(plussaGuiSettings.activeProjectId, plussaGuiSettings.activeFileMeta);
+			plussaGuiSettings.activeFileMeta = {};
+			$("#markItUp").val("");
+			$("#plussaGuiFilePath").val("");
+			console.log(JSON.stringify(result));
+		});
+	});
+
+	$("#plussaGuiPreviewBtn").click(function() {
+		console.log("Preview Button Clicked!");
 	});
 
 });
