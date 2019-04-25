@@ -8,7 +8,6 @@ sys.setdefaultencoding('utf-8')
 from flask import Flask, request, render_template, make_response, url_for
 
 from rsted.html import rst2html as _rst2html
-from rsted.pdf import rst2pdf as _rst2pdf
 
 from flaskext.helpers import render_html
 
@@ -53,20 +52,6 @@ def rst2html():
         theme = None
     html = _rst2html(rst, theme=theme)
     return html
-
-@app.route('/srv/rst2pdf/', methods=['POST'])
-def rst2pdf():
-    rst = request.form.get('rst', '')
-    theme = request.form.get('theme')
-    if theme == 'basic':
-        theme = None
-
-    pdf = _rst2pdf(rst, theme=theme)
-    responce = make_response(pdf)
-    responce.headers['Content-Type'] = 'application/pdf'
-    responce.headers['Content-Disposition'] = 'attachment; filename="rst.pdf"'
-    responce.headers['Content-Transfer-Encoding'] = 'binary'
-    return responce
 
 
 if __name__ == '__main__':
