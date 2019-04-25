@@ -136,10 +136,8 @@ function reactForRst(rst) {
 }
 
 window.onpopstate = function(ev) {
-    console.log("lol");
     var doUpdate = false;
     if (getDecodedHash() != lastContent) {
-        console.log("lol");
         reactForRst(getDecodedHash())
         doUpdate = true;
     }

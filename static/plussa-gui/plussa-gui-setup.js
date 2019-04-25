@@ -1,24 +1,119 @@
 var plussaGuiSettings = {
 	baseRestUrl: "https://gitlab.com/api/v4/",
+	activeProjectId: 0,
+	activeProjectMeta: false,
+	activeFileMeta: false,
 	errorCallback: function(status, errorThrown) {
 		$('#plussaGuiReport').text("Error: "+status);
+		console.log("ERROR!\n"+JSON.stringify(errorThrown));
 	}
 }
 
-var projectsGitLabJSON = [{"id":11862275,"description":"","name":"Testinen","name_with_namespace":"Petteri Järvinen / Testinen","path":"testinen","path_with_namespace":"pjarvinen/testinen","created_at":"2019-04-15T10:20:41.799Z","default_branch":"master","tag_list":[],"ssh_url_to_repo":"git@gitlab.com:pjarvinen/testinen.git","http_url_to_repo":"https://gitlab.com/pjarvinen/testinen.git","web_url":"https://gitlab.com/pjarvinen/testinen","readme_url":"https://gitlab.com/pjarvinen/testinen/blob/master/README.md","avatar_url":null,"star_count":0,"forks_count":0,"last_activity_at":"2019-04-15T10:20:41.799Z","namespace":{"id":4641521,"name":"pjarvinen","path":"pjarvinen","kind":"user","full_path":"pjarvinen","parent_id":null},"_links":{"self":"https://gitlab.com/api/v4/projects/11862275","issues":"https://gitlab.com/api/v4/projects/11862275/issues","merge_requests":"https://gitlab.com/api/v4/projects/11862275/merge_requests","repo_branches":"https://gitlab.com/api/v4/projects/11862275/repository/branches","labels":"https://gitlab.com/api/v4/projects/11862275/labels","events":"https://gitlab.com/api/v4/projects/11862275/events","members":"https://gitlab.com/api/v4/projects/11862275/members"},"archived":false,"visibility":"private","owner":{"id":3570802,"name":"Petteri Järvinen","username":"pjarvinen","state":"active","avatar_url":"https://secure.gravatar.com/avatar/66d79803e770babf4b7f75f74f7cc9c4?s=80\u0026d=identicon","web_url":"https://gitlab.com/pjarvinen"},"resolve_outdated_diff_discussions":false,"container_registry_enabled":true,"issues_enabled":true,"merge_requests_enabled":true,"wiki_enabled":true,"jobs_enabled":true,"snippets_enabled":true,"shared_runners_enabled":true,"lfs_enabled":true,"creator_id":3570802,"import_status":"none","open_issues_count":0,"public_jobs":true,"ci_config_path":null,"shared_with_groups":[],"only_allow_merge_if_pipeline_succeeds":false,"request_access_enabled":false,"only_allow_merge_if_all_discussions_are_resolved":false,"printing_merge_request_link_enabled":true,"merge_method":"merge","permissions":{"project_access":{"access_level":40,"notification_level":3},"group_access":null},"mirror":false,"external_authorization_classification_label":""},{"id":10918435,"description":"Test project for TIETS19 / TIEA4 course work at Tampere University","name":"TuniPlussa","name_with_namespace":"Petteri Järvinen / TuniPlussa","path":"tuniplussa","path_with_namespace":"pjarvinen/tuniplussa","created_at":"2019-02-19T13:11:07.251Z","default_branch":"master","tag_list":[],"ssh_url_to_repo":"git@gitlab.com:pjarvinen/tuniplussa.git","http_url_to_repo":"https://gitlab.com/pjarvinen/tuniplussa.git","web_url":"https://gitlab.com/pjarvinen/tuniplussa","readme_url":"https://gitlab.com/pjarvinen/tuniplussa/blob/master/README.md","avatar_url":null,"star_count":0,"forks_count":0,"last_activity_at":"2019-04-15T10:22:19.249Z","namespace":{"id":4641521,"name":"pjarvinen","path":"pjarvinen","kind":"user","full_path":"pjarvinen","parent_id":null},"_links":{"self":"https://gitlab.com/api/v4/projects/10918435","issues":"https://gitlab.com/api/v4/projects/10918435/issues","merge_requests":"https://gitlab.com/api/v4/projects/10918435/merge_requests","repo_branches":"https://gitlab.com/api/v4/projects/10918435/repository/branches","labels":"https://gitlab.com/api/v4/projects/10918435/labels","events":"https://gitlab.com/api/v4/projects/10918435/events","members":"https://gitlab.com/api/v4/projects/10918435/members"},"archived":false,"visibility":"private","owner":{"id":3570802,"name":"Petteri Järvinen","username":"pjarvinen","state":"active","avatar_url":"https://secure.gravatar.com/avatar/66d79803e770babf4b7f75f74f7cc9c4?s=80\u0026d=identicon","web_url":"https://gitlab.com/pjarvinen"},"resolve_outdated_diff_discussions":false,"container_registry_enabled":true,"issues_enabled":true,"merge_requests_enabled":true,"wiki_enabled":true,"jobs_enabled":true,"snippets_enabled":true,"shared_runners_enabled":true,"lfs_enabled":true,"creator_id":3570802,"import_status":"none","open_issues_count":0,"public_jobs":true,"ci_config_path":null,"shared_with_groups":[],"only_allow_merge_if_pipeline_succeeds":false,"request_access_enabled":false,"only_allow_merge_if_all_discussions_are_resolved":false,"printing_merge_request_link_enabled":true,"merge_method":"merge","permissions":{"project_access":{"access_level":40,"notification_level":3},"group_access":null},"mirror":false,"external_authorization_classification_label":""}];
 
 $(document).ready(function(){
+	plussaGuiGitlabRest.init({
+		baseUrl: plussaGuiSettings.baseRestUrl,
+    errorCallback: plussaGuiSettings.errorCallback
+	});
+	/* File tree structure for GUI design at startup. Remove comment slashes when necessary. */
+	$('#fileTree').fileTree({ treeStructure: plussaGuiFileTreeGenerator.test(), script: fileTreeScript }, function(linkNode) { });
+	$("#markItUp").val("");
   // Setup markItUp! a javascript text editor
 	$('#markItUp').markItUp(markItUpSettings);
 
-	var testFileTree = plussaGuiFileManager.setUserProjects(projectsGitLabJSON);
-	console.log(testFileTree);
+	/*
+	 * Helper function that finds the project id value of the currently open
+	 * GitLab project from the jQuery File Tree. Id attribute of the project
+	 * root folder <li> element is set by file-tree-generator.js
+	 */
+	var getActiveProjectId = function(node) {
+		while(!$(node).parent().attr('id')) {
+			node = $(node).parent();
+		}
+		return $(node).parent().attr('id').split('-')[1];
+	}
 
-  $('#fileTree').fileTree({ treeStructure: testFileTree }, function(file) {
-		alert(file);
-	});
+	var explodeFilePath = function(filePath) {
+    var lastIndexOfSlash = filePath.lastIndexOf('/');
+    if(lastIndexOfSlash != -1) {
+      return [filePath.substring(0, lastIndexOfSlash), filePath.substring(lastIndexOfSlash, filePath.length-1)];
+    }
+    else {
+      return false;
+    }
+  }
 
-	$('#loadProjectsBtn').click(function() {
+	var updateFilePathRibbon = function(folder) {
+		$("#plussaGuiProjectName").text(plussaGuiFileManager.getProjectMetaData(plussaGuiSettings.activeProjectId).name+": ");
+		if(plussaGuiSettings.activeFileMeta.id) {
+			//var pathInfo = explodeFilePath(plussaGuiSettings.activeFileMeta.path);
+			$("#plussaGuiFolderPath").text(plussaGuiSettings.activeFileMeta.path);
+			//$("#plussaGuiFilePath").text("");
+		}
+		else {
+			if(folder != undefined) {
+				$("#plussaGuiFolderPath").text(folder);
+			}
+			else {
+				$("#plussaGuiFolderPath").text("");
+			}
+		}
+	}
+
+	/* Function that jQuery File Tree Plugin calls replacing the original
+	 * $.post(...) query in the plugin code.
+	 * This function opens a folder i.e. loads the folder content from GitLab
+	 * REST API. The project root folders require different treatment from
+	 * the project sub folders.
+	 */
+	var fileTreeScript = function(node, path, callback) {
+		var projectId = "";
+		var isProjectRoot = false;
+		// Find the <li> element with an id attribute that holds the GitLab project id value.
+		if($(node).attr('id')) {
+			isProjectRoot = true;
+			projectId = $(node).attr('id').split('-')[1];
+		}
+		else {
+			projectId = getActiveProjectId(node);
+		}
+		plussaGuiSettings.activeProjectId = projectId;
+		plussaGuiSettings.activeProjectMeta = plussaGuiFileManager.getProjectMetaData(projectId);
+		var fileTreeJSON = {};
+		if(isProjectRoot) {
+			// If the project root folder is already loaded generate the file tree.
+			if(fileTreeJSON = plussaGuiFileManager.isProjectLoaded(projectId)) {
+				callback(plussaGuiFileTreeGenerator.generateFileTreeHTML(fileTreeJSON));
+				console.log("Project already loaded: "+"\nid: "+projectId);
+			}
+			else {
+				plussaGuiGitlabRest.loadOneProject(projectId, function(result) {
+					plussaGuiFileManager.saveProjectJSON(projectId, result);
+					callback(plussaGuiFileTreeGenerator.generateFileTreeHTML(result));
+					console.log("Loaded one project: "+"\nid: "+projectId+"\n"+JSON.stringify(result));
+				});
+			}
+			updateFilePathRibbon();
+		}
+		// Not a project root folder, load a project sub folder if not already loaded.
+		else {
+			if(fileTreeJSON = plussaGuiFileManager.isFolderLoaded(projectId, path)) {
+				callback(plussaGuiFileTreeGenerator.generateFileTreeHTML(fileTreeJSON));
+				console.log("Folder "+path+" already loaded: "+"\nid: "+projectId);
+			}
+			else {
+				plussaGuiGitlabRest.loadFolder(projectId, path, function(result) {
+					plussaGuiFileManager.saveFolderJSON(projectId, path, result);
+					callback(plussaGuiFileTreeGenerator.generateFileTreeHTML(result));
+					console.log("Loaded folder path: "+path+"\nfrom project: "+projectId);
+				});
+			}
+			updateFilePathRibbon(path);
+		}
+		//$("#plussaGuiProjectName").text(plussaGuiFileManager.getProjectMetaData(projectId).name+": ");
+	};
+
+	$('#plussaGuiLoadProjectsBtn').click(function() {
 		var userId = $('#userId').val();
 		var privateToken = $('#privateToken').val();
 		if(!userId || !privateToken) {
@@ -26,10 +121,105 @@ $(document).ready(function(){
 		}
 		else {
 			// Construct a folder list presentation of the user's GitLab projects
-			plussaGuiGitlabRest.loadProjects(userId, privateToken, function(result) {
-				console.log(JSON.stringify(result));
+			plussaGuiGitlabRest.loadProjectsInfo(userId, privateToken, function(result) {
+				plussaGuiFileManager.setUserProjects(result);
+				var fileTreeHTML = plussaGuiFileTreeGenerator.generateFileTreeHTML(result);
+				//console.log(fileTreeHTML);
+				$('#fileTree').fileTree({ treeStructure: fileTreeHTML, script: fileTreeScript }, function(linkNode) {
+					// Callback function for implementing file download after click events of file name links.
+					var filePath = $(linkNode).attr('rel');
+					var projectId = getActiveProjectId(linkNode);
+					console.log("file path: "+filePath+"\nproject id: "+projectId);
+					var fileMeta = plussaGuiFileManager.getFileMetaData(projectId, filePath);
+					if(fileMeta) {
+						var content = plussaGuiFileManager.isFileLoaded(fileMeta.id);
+						/* If file is already loaded, get the contents. Updates are stored
+						 * in browser memory as well as sent to the server. */
+						if(content) {
+							$('#markItUp').val(atob(content));
+							console.log("Loaded "+filePath+" from File Manager.");
+						}
+						else {
+							plussaGuiGitlabRest.loadFile(projectId, fileMeta.id, function(result) {
+								plussaGuiFileManager.saveFileJSON(result);
+								$('#markItUp').val(atob(result.content));
+								console.log("Loaded "+filePath+" from REST API.");
+							});
+						}
+						plussaGuiSettings.activeFileMeta = fileMeta;
+						updateFilePathRibbon(filePath.path);
+						//$("#plussaGuiProjectName").text(plussaGuiFileManager.getProjectMetaData(projectId).name+": ");
+					}
+					else {
+						plussaGuiSettings.errorCallback(500, "File SHA value was not found.");
+					}
+					$("#plussaGuiFileNameInput").css("display", "none");
+				});
 			});
 		}
+	});
+
+	$("#plussaGuiSaveFileBtn").click(function() {
+		var projectMeta = plussaGuiSettings.activeProjectMeta;//plussaGuiFileManager.getProjectMetaData(plussaGuiSettings.activeProjectId);
+		var content = plussaGuiFileManager.isFileLoaded(plussaGuiSettings.activeFileMeta.id);
+		var path = $("#plussaGuiFolderPath").text();
+		/* Check if it is an update. */
+		if(content) {
+			// TODO: Check if contents have truly been altered and only after that proceed with the update.
+			console.log("Update file.");
+
+		}
+		/* Save a new file. */
+		else {
+			console.log("Create file.");
+			// Check if the file is to be saved into the project root folder.
+			if(path.length == 0) {
+				path = $("#plussaGuiFileNameInput").val();
+			}
+			else {
+				path += "/" + $("#plussaGuiFileNameInput").val();
+			}
+			var branch = projectMeta.default_branch;//plussaGuiFileManager.getProjectMetaData(plussaGuiSettings.activeProjectId).default_branch;
+			console.log("projectId: "+projectMeta.id+"\nbranch: "+projectMeta.default_branch+"\npath: "+path+"\ncontent: "+$("#markItUp").val());
+			/*plussaGuiGitlabRest.newFile(plussaGuiSettings.activeProjectId, branch, path, $("#markItUp").val(), function(result) {
+				console.log(JSON.stringify(result));
+				//plussaGuiSettings.activeFileMeta = plussaGuiFileManager.getFileMetaData()
+			});*/
+		}
+		$("#plussaGuiFileNameInput").css("display", "none");
+		updateFilePathRibbon(path);
+	});
+
+	$("#plussaGuiNewFileBtn").click(function() {
+		$("#markItUp").val("");
+		$("#plussaGuiFileNameInput").val("");
+		$("#plussaGuiFileNameInput").css("display", "inline");
+		if(plussaGuiSettings.activeFileMeta) {
+			plussaGuiSettings.activeFileMeta = false;
+			var pathInfo = explodeFilePath($("#plussaGuiFolderPath").text());
+			if(pathInfo) {
+				$("#plussaGuiFolderPath").text(pathInfo[0]);
+			}
+			else {
+				$("#plussaGuiFolderPath").text("");
+			}
+		}
+	});
+
+	$("#plussaGuiDeleteFileBtn").click(function() {
+		var branch = plussaGuiFileManager.getProjectMetaData(plussaGuiSettings.activeProjectId).default_branch;
+		var path = $("#plussaGuiFilePath").val();
+		plussaGuiGitlabRest.deleteFile(plussaGuiSettings.activeProjectId, branch, path, function(result) {
+			plussaGuiFileManager.updateAfterFileDelete(plussaGuiSettings.activeProjectId, plussaGuiSettings.activeFileMeta);
+			plussaGuiSettings.activeFileMeta = {};
+			$("#markItUp").val("");
+			$("#plussaGuiFilePath").val("");
+			console.log(JSON.stringify(result));
+		});
+	});
+
+	$("#plussaGuiPreviewBtn").click(function() {
+		openPreview();
 	});
 
 });
