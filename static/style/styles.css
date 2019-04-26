@@ -38,23 +38,24 @@
 #loader {
   color: official;
   display: none;
-  position: absolute;
-  width: 64px;
-  height: 64px;
+  position: relative;
+  width: 32px;
+  height: 32px;
+  float: right;
 }
 #loader div {
-  transform-origin: 32px 32px;
+  transform-origin: 16px 16px;
   animation: loader 1.2s linear infinite;
 }
 #loader div:after {
   content: " ";
   display: block;
   position: absolute;
-  top: 3px;
-  left: 29px;
-  width: 5px;
-  height: 14px;
-  border-radius: 20%;
+  top: 1.5px;
+  left: 14.5px;
+  width: 2.5px;
+  height: 7px;
+  border-radius: 10%;
   background: rgb(129, 129, 129);
 }
 #loader div:nth-child(1) {

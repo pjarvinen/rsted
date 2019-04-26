@@ -62,7 +62,6 @@ def preview():
         compiler = RSTCompiler(project, token, filepath)
         if not compiler.directory_exists():
             compiler.download_archive()
-        print(compiler.dirpath + filepath)
         with open(compiler.dirpath + filepath, "w") as rf:
             rf.write(rst)
         compiler.compile_rst()
