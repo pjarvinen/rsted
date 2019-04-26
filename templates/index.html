@@ -46,51 +46,61 @@
     <script type="text/javascript">
         var script_root = {{ request.script_root|tojson|safe }};
     </script>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col">
-          <h1>A-plus LMS course editor</h1>
-          <div id="plussaGuiReport"></div>
-          <form>
-            <input type="text" id="userId" placeholder="User Id" />
-            <input type="text" id="privateToken" placeholder="Private Token" />
-            <button type="button" class="btn btn-primary" id="plussaGuiLoadProjectsBtn">Load Projects</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <!-- Two columns container with margin top (mt-1) class attribute -->
-    <div class="container-fluid mt-1">
-      <div class="row">
-        <div class="col-3">
-          <div id="fileTree"></div>
-        </div>
-        <div class="col-9">
-          <div class="row">
-            <div class="col">
-              <span id="plussaGuiProjectName" style="font-weight:bold;"></span>
-              <span id="plussaGuiFolderPath"></span>
-              <span id="plussaGuiFilePath"></span>
-              <input type="text" id="plussaGuiFileNameInput" style="display: none;"/>
-              <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
-              <button type="button" class="btn btn-primary" id="plussaGuiNewFileBtn">New File</button>
-              <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
-              <div id="loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-              <button type="button" class="btn btn-primary" id="plussaGuiPreviewBtn">HTML Preview</button>
+    <!-- Header container-->
+    <div class="container-fluid" id="topContainer">
+            <div class="row">
+              <div class="col-12">
+                <div class="row titlebar">
+                  <h1 class="page-header">A-plus LMS course editor</h1>
+                </div>
+              </div>
+              <div class="" id="plussaGuiReport"></div>
+            </div>
+          </div>
+          <!-- Credentials container -->
+          <div class="container-fluid">
+            <div class="row">
+                <div class="col-12" id="download">
+                  <form>
+                    <input type="text" id="userId" placeholder="User Id" />
+                    <input type="text" id="privateToken" placeholder="Private Token" />
+                    <button type="button" class="btn btn-primary" id="plussaGuiLoadProjectsBtn">Load Projects</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <!-- Two columns container -->
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-3 bluebg">
+                <div id="fileTree"></div>
+              </div>
+              <div class="col-9" id="editor">
+                <div class="row">
+                  <div class="col mt-2" id="buttons">
+                    <span id="plussaGuiProjectName" style="font-weight:bold;"></span>
+                    <span id="plussaGuiFolderPath"></span>
+                    <span id="plussaGuiFilePath"></span>
+                    <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
+                    <button type="button" class="btn btn-primary" id="plussaGuiNewFileBtn">New File</button>
+                    <input type="text" id="plussaGuiFileNameInput" style="display: none;"/>
+                    <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
+                    <div id="loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                    <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn">HTML Preview</button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <textarea id="markItUp" rows="15" name="rst" form="preview_html">{ rst }</textarea>
+                </div>
+              </div>
             </div>
           </div>
           <div class="row">
-            <div class="col">
-              <textarea id="markItUp" rows="15" name="rst" form="preview_html">{{ rst }}</textarea>
+            <div class="col container-fluid"">
+              <!--iframe id="browse"></iframe-->
             </div>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <!--iframe id="browse"></iframe-->
-        </div>
-      </div>
-    </div>
-  </body>
-</html>
+      </body>
+    </html>

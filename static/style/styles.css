@@ -33,28 +33,134 @@
     display: inline-block;
 }
 
+.titlebar {
+    margin-bottom: 24px;
+    background-color: #337ab7;
+    background-image: linear-gradient(to bottom, #337ab7, #2e6da4);
+    background-repeat: repeat-x;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    border-color: #080808;
+    border-radius: 0;
+    -index: 1000;
+    border-width: 0 0 1px;
+    position: relative;
+    min-height: 50px;
+    margin-bottom: 20px;
+    display: block;
+    box-sizing: border-box;
+  }
+  .page-header {
+    color: #ffffff;
+    background: transparent;
+    float: left;
+    height: 50px;
+    padding: 15px 15px;
+    font-size: 18px;
+    line-height: 20px;
+    text-decoration: none;
+    box-sizing: border-box;
+    text-transform: capitalize;
+  }
+
+  #download {
+    width: 100%;
+    color: #ffffff;
+    background: transparent;
+    background-color: #aac4db;
+    padding-bottom: 15px;
+    box-shadow: 1 1px 4px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    min-width: 450;
+  }
+
+  .btn-primary {
+    width: 120px;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    margin-left: 4px;
+  }
+  .btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+        border-left-color: transparent;
+    border-radius: 4px;
+  }
+  .btn-right {
+    float: right;
+  }
+
+  #buttons {
+    padding-top: 10px;
+    margin-bottom: 10px;
+    min-width: 534px;
+  }
+
+  html {
+    font-size: 10px;
+  }
+  html {
+    font-family: sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+  }
+
+  .bluebg {
+    background-color: #aac4db80;
+  }
+
+  #topContainer {
+    background-color: #aac4db;
+  }
+
+  #editor {
+    width: 100%;
+  }
+
 
 /* Loading animation */
 #loader {
   color: official;
   display: none;
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 25.6px;
+  height: 25.6px;
   float: right;
 }
 #loader div {
-  transform-origin: 16px 16px;
+  transform-origin: 12.8px 12.8px;
   animation: loader 1.2s linear infinite;
 }
 #loader div:after {
   content: " ";
-  display: block;
+  display: inline-block;
   position: absolute;
-  top: 1.5px;
-  left: 14.5px;
-  width: 2.5px;
-  height: 7px;
+  top: 1.2px;
+  left: 11.6px;
+  width: 2px;
+  height: 5.6px;
   border-radius: 10%;
   background: rgb(129, 129, 129);
 }
