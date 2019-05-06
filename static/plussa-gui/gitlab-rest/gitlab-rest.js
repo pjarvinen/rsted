@@ -68,44 +68,47 @@ var plussaGuiGitlabRest = (function() {
     doRestQuery(url, plussaGuiGitlabRest.privateToken, "GET", {}, callback);
   }
 
-  var loadFile = function(projectId, fileSHA, callback) {
-    var url = plussaGuiGitlabRest.baseUrl + "projects/" + projectId + "/repository/blobs/" + fileSHA;
+  var loadFile = function(projectId, filePath, branch, callback) {
+    var url = plussaGuiGitlabRest.baseUrl + "projects/" + projectId + "/repository/files/" + encodeURIComponent(filePath).replace('.', '%2E') + '?ref='+branch;
+    console.log("Load file from: \n"+url);
     doRestQuery(url, plussaGuiGitlabRest.privateToken, "GET", {}, callback);
   }
 
-  var newFile = function(projectId, branch, path, content, callback) {
-    var commitData = [{
-      action: "create",
-      file_path: path,
+  var newFile = function(projectId, branch, filePath, content, callback) {
+    var url = plussaGuiGitlabRest.baseUrl + "projects/" + projectId + "/repository/files/" + encodeURIComponent(filePath).replace('.', '%2E');
+    var commitData = {
+      branch: branch,
       content: btoa(content),
-      encoding: "base64"
-    }];
-    var message = "Created new file: "+path;
-    doCommit(projectId, branch, message, commitData, callback);
+      encoding: "base64",
+      commit_message: "Created file: "+filePath
+    };
+    doRestQuery(url, plussaGuiGitlabRest.privateToken, "POST", commitData, callback);
   }
 
-  var updateFile = function(projectId, branch, path, content, callback) {
-    var commitData = [{
-      action: "update",
-      file_path: path,
+  var updateFile = function(projectId, branch, filePath, content, callback) {
+    var url = plussaGuiGitlabRest.baseUrl + "projects/" + projectId + "/repository/files/" + encodeURIComponent(filePath).replace('.', '%2E');
+    var commitData = {
+      branch: branch,
       content: btoa(content),
-      encoding: "base64"
-    }];
-    var message = "Updated file: "+path;
-    doCommit(projectId, branch, message, commitData, callback);
+      encoding: "base64",
+      commit_message: "Updated file: "+filePath
+    };
+    console.log("Updating to: \n"+url+"\nData: "+JSON.stringify(commitData));
+    doRestQuery(url, plussaGuiGitlabRest.privateToken, "PUT", commitData, callback);
   }
 
   var moveFile = function() {
 
   }
 
-  var deleteFile = function(projectId, branch, path, callback) {
-    var commitData = [{
-      action: "delete",
-      file_path: path
-    }];
-    var message = "Deleted file: "+path;
-    doCommit(projectId, branch, message, commitData, callback);
+  var deleteFile = function(projectId, branch, filePath, callback) {
+    var url = plussaGuiGitlabRest.baseUrl + "projects/" + projectId + "/repository/files/" + encodeURIComponent(filePath).replace('.', '%2E');
+    var commitData = {
+      branch: branch,
+      commit_message: "Deleted file: "+filePath
+    };
+    console.log("Deleting: \n"+url+"\nData: "+JSON.stringify(commitData));
+    doRestQuery(url, plussaGuiGitlabRest.privateToken, "DELETE", commitData, callback);
   }
 
   var renameFolder = function() {
