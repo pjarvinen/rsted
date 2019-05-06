@@ -6,8 +6,8 @@ var plussaGuiFileManager = (function() {
   var folderJSONs = new Map(); // Project id keys map folder JSON maps, which in turn have folder paths as keys.
   var fileJSONs = new Map(); // All downloaded file contents with file id (SHA value) keys.
 
-  function findFileJSON(fileId) {
-    var file = fileJSONs.get(fileId);
+  function findFileJSON(mapId) {
+    var file = fileJSONs.get(mapId);
     if(file != undefined) {
       return file;
     }
@@ -151,12 +151,52 @@ var plussaGuiFileManager = (function() {
     }
   }
 
-  var saveFileJSON = function(fileJSON) {
-    fileJSONs.set(fileJSON.sha, fileJSON);
+  function addNewFileMetaData(projectId, filePath) {
+    var newMetaJSON = {
+      id: 0,
+      name: "",
+      type: "blob",
+      path: filePath,
+      mode: "100644"
+    }
+    var pathInfo = plussaGuiFileManager.explodeFilePath(filePath);
+    /* If the file has no folder path it resides in the project root folder. */
+    if(!pathInfo) {
+      newMetaJSON.name = filePath;
+      (projectJSONs.get(projectId)).push(newMetaJSON); // Add new file meta data JSON to the project root folder.
+      //folder.push(newMetaJSON);
+      //projectJSONs.set(projectId, folder);
+    }
+    else {
+      newMetaJSON.name = pathInfo[1];
+      (findFolder(projectId, pathInfo[0])).push(newMetaJSON);
+    }
   }
 
-  var isFileLoaded = function(fileId) {
-    var result = findFileJSON(fileId);
+  var saveFileJSON = function(mapId, fileJSON) {
+    fileJSONs.set(mapId, fileJSON);
+  }
+
+  function saveNewFileJSON(mapId, newContent) {
+    var fileJSON = {
+      size: newContent.length,
+      encoding: "base64",
+      content: btoa(newContent),
+      sha:0
+    }
+    fileJSONs.set(mapId, fileJSON);
+  }
+
+  function updateFileJSON(mapId, newContent) {
+    var file = fileJSONs.get(mapId);
+    file.size = newContent.length;
+    file.content = btoa(newContent);
+    file.sha = 0;
+    fileJSONs.set(mapId, file);
+  }
+
+  var isFileLoaded = function(mapId) {
+    var result = findFileJSON(mapId);
     if(result) {
       return result.content;
     }
@@ -165,9 +205,31 @@ var plussaGuiFileManager = (function() {
     }
   }
 
-  var updateAfterFileDelete = function(projectId, fileMeta) {
-    fileJSONs.delete(fileMeta.id); // Remove file content.
-    deleteFileMetaData(projectId, fileMeta.path);
+  var updateAfterFileDelete = function(projectId, filePath) {
+    fileJSONs.delete(projectId + filePath); // Remove file content from File Manager.
+    deleteFileMetaData(projectId, filePath);
+  }
+
+  var updateAfterFileSave = function(projectId, filePath, newContent) {
+    var mapId = projectId + filePath;
+    // Update file content if the file path for the project exists.
+    if(fileJSONs.has(mapId)) {
+      updateFileJSON(mapId, newContent);
+    }
+    else {
+      saveNewFileJSON(mapId, newContent);
+      addNewFileMetaData(projectId, filePath);
+    }
+  }
+
+  var explodeFilePath = function(filePath) {
+    var lastIndexOfSlash = filePath.lastIndexOf('/');
+    if(lastIndexOfSlash != -1) {
+      return [filePath.substring(0, lastIndexOfSlash), filePath.substring(lastIndexOfSlash+1, filePath.length)];
+    }
+    else {
+      return false;
+    }
   }
 
   // Public File Manager API
@@ -181,6 +243,8 @@ var plussaGuiFileManager = (function() {
       getFileMetaData: getFileMetaData,
       saveFileJSON: saveFileJSON,
       updateAfterFileDelete: updateAfterFileDelete,
-      isFileLoaded: isFileLoaded
+      updateAfterFileSave: updateAfterFileSave,
+      isFileLoaded: isFileLoaded,
+      explodeFilePath: explodeFilePath
   };
 })();
