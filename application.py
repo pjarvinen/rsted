@@ -2,8 +2,8 @@
 # all the imports
 
 import os, sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+#reload(sys)
+#sys.setdefaultencoding('utf-8')
 
 from flask import Flask, request, render_template, make_response, url_for, send_from_directory
 

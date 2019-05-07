@@ -1,4 +1,4 @@
-import requests, StringIO, subprocess, os, sys, shutil, random
+import requests, io, subprocess, os, sys, shutil, random
 from zipfile import ZipFile
 
 base_url = "https://gitlab.com/api/v4/projects/"
@@ -21,7 +21,7 @@ class RSTCompiler:
         # Make the API request
         r = requests.get(url, headers=headers, stream=True)
         try:
-            with ZipFile(StringIO.StringIO(r.content)) as zipObj:
+            with ZipFile(io.StringIO(r.content)) as zipObj:
                 namelist = zipObj.namelist()
                 zipObj.extractall("temp")
                 os.rename("temp/" + str(namelist[0])[:-1], "temp/" + str(self.project_id))
