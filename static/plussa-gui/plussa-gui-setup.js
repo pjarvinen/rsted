@@ -18,7 +18,7 @@ $(document).ready(function(){
 		baseUrl: plussaGuiSettings.baseRestUrl,
     errorCallback: plussaGuiSettings.errorCallback
 	});
-	/* File tree structure for GUI design at startup. Remove comment slashes when necessary. */
+	/* The line below constructs a File Tree structure for GUI design at startup. Remove comment slashes when necessary. */
 	//$('#fileTree').fileTree({ treeStructure: plussaGuiFileTreeGenerator.test(), script: fileTreeScript }, function(linkNode) { });
 	$("#markItUp").val("");
   // Setup markItUp! a javascript text editor
@@ -28,15 +28,14 @@ $(document).ready(function(){
 		$("#plussaGuiProjectName").text(plussaGuiFileManager.getProjectMetaData(plussaGuiSettings.activeProjectId).name+": ");
 		if(plussaGuiSettings.activeFileMeta.id) {
 			//var pathInfo = plussaGuiFileManager.explodeFilePath(plussaGuiSettings.activeFileMeta.path);
-			$("#plussaGuiFolderPath").text(plussaGuiSettings.activeFileMeta.path);
-			//$("#plussaGuiFilePath").text("");
+			$("#plussaGuiFilePath").text(plussaGuiSettings.activeFileMeta.path);
 		}
 		else {
 			if(folder != undefined) {
-				$("#plussaGuiFolderPath").text(folder);
+				$("#plussaGuiFilePath").text(folder);
 			}
 			else {
-				$("#plussaGuiFolderPath").text("");
+				$("#plussaGuiFilePath").text("");
 			}
 		}
 	}
@@ -160,7 +159,7 @@ $(document).ready(function(){
 	$("#plussaGuiSaveFileBtn").click(function() {
 		var projectMeta = plussaGuiSettings.activeProjectMeta;
 		var content = plussaGuiFileManager.isFileLoaded(projectMeta.id + plussaGuiSettings.activeFileMeta.path);
-		var path = $("#plussaGuiFolderPath").text();
+		var path = $("#plussaGuiFilePath").text();
 		var newContent = $("#markItUp").val();
 		var successReport = "Saved " + path + " in project: " + projectMeta.name;
 		/* Check if it is an update. */
@@ -198,17 +197,22 @@ $(document).ready(function(){
 	});
 
 	$("#plussaGuiNewFileBtn").click(function() {
+		var folderTreeHTML = plussaGuiFileTreeGenerator.generateFolderTreeHTML(false, "plussaGuiFolderTree", function(path){
+			$("#plussaGuiNewFilePath").text(path+"/");
+		});
+	});
+
+	$("#plussaGuiCreateFileBtn").click(function() {
 		$("#markItUp").val("");
 		$("#plussaGuiFileNameInput").val("");
-		$("#plussaGuiFileNameInput").css("display", "inline");
 		if(plussaGuiSettings.activeFileMeta) {
 			plussaGuiSettings.activeFileMeta = false;
-			var pathInfo = plussaGuiFileManager.explodeFilePath($("#plussaGuiFolderPath").text());
+			var pathInfo = plussaGuiFileManager.explodeFilePath($("#plussaGuiFilePath").text());
 			if(pathInfo) {
-				$("#plussaGuiFolderPath").text(pathInfo[0]);
+				$("#plussaGuiFilePath").text(pathInfo[0]);
 			}
 			else {
-				$("#plussaGuiFolderPath").text("");
+				$("#plussaGuiFilePath").text("");
 			}
 		}
 	});
@@ -216,7 +220,7 @@ $(document).ready(function(){
 	$("#plussaGuiDeleteFileBtn").click(function() {
 		var projectMeta = plussaGuiSettings.activeProjectMeta;
 		var branch = projectMeta.default_branch;
-		var path = $("#plussaGuiFolderPath").text();
+		var path = $("#plussaGuiFilePath").text();
 		console.log("Delete file. Path: "+path);
 		plussaGuiGitlabRest.deleteFile(projectMeta.id, branch, path, function(result) {
 			plussaGuiFileManager.updateAfterFileDelete(projectMeta.id, plussaGuiSettings.activeFileMeta.path);

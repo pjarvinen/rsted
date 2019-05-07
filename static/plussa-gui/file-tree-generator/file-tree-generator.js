@@ -41,6 +41,14 @@ var plussaGuiFileTreeGenerator = (function() {
     return fileTreeHTMLbits.root(fileTreeHTML);
   }
 
+  var generateFolderTreeHTML = function(folderJSON, targetId, callback) {
+    var folderTreeHTML = '<ul class="jqueryFileTree" id="plussaGuiFolderSelect"><li id="aPlus-10918435" class="directory expanded"><a href="#" rel="tuniplussa">TuniPlussa</a><ul class="jqueryFileTree" style=""><li class="directory expanded"><a href="#" rel="_static">_static</a></li><li class="directory expanded"><a href="#" rel="_templates">_templates</a></li><li class="directory expanded"><a href="#" rel="a-plus-rst-tools">a-plus-rst-tools</a></li><li class="directory expanded"><a href="#" rel="exercises">exercises</a></li><li class="directory expanded"><a href="#" rel="extensions">extensions</a></li><li class="directory expanded"><a href="#" rel="images">images</a></li><li class="directory expanded"><a href="#" rel="m01_introduction">m01_introduction</a></li><li class="directory expanded"><a href="#" rel="m02_programming_exercises">m02_programming_exercises</a></li><li class="directory expanded"><a href="#" rel="m03_acos">m03_acos</a></li><li class="directory expanded"><a href="#" rel="m04_converting">m04_converting</a></li><li class="directory expanded"><a href="#" rel="m05_lti">m05_lti</a></li><li class="directory expanded"><a href="#" rel="m06_rubyric">m06_rubyric</a></li><li class="directory expanded"><a href="#" rel="m07_admin">m07_admin</a></li></ul></li></ul>';
+    $("#"+targetId).html(folderTreeHTML);
+    $("#plussaGuiFolderSelect").find("a").on("click", function(){
+      callback($(this).attr("rel"));
+    });
+  }
+
   /*
 	 * Helper function that finds the project id value of the currently open
 	 * GitLab project from the jQuery File Tree. Id attribute of the project
@@ -91,6 +99,7 @@ var plussaGuiFileTreeGenerator = (function() {
   // Public File Tree Generator API
   return {
       generateFileTreeHTML: generateFileTreeHTML,
+      generateFolderTreeHTML: generateFolderTreeHTML,
       getActiveProjectId: getActiveProjectId,
       induceFolderOpenClick: induceFolderOpenClick,
       induceProjectOpenClick: induceProjectOpenClick,
