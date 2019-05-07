@@ -1,7 +1,7 @@
 import os
 
 # configuration
-DEBUG = False
+DEBUG = 1
 
 RUN_PATH = 'var/run'
 PID_FILE = 'fastcgi.pid'
