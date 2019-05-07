@@ -7,7 +7,6 @@ sys.setdefaultencoding('utf-8')
 
 from flask import Flask, request, render_template, make_response, url_for, send_from_directory
 
-from rsted.html import rst2html as _rst2html
 from rsted.rstcompiler import RSTCompiler
 
 from flaskext.helpers import render_html
@@ -40,15 +39,6 @@ def ctx_pro():
 def index():
     yield 'js_params', {'theme': request.args.get('theme', '')}
 
-
-@app.route('/srv/rst2html/', methods=['POST', 'GET'])
-def rst2html():
-    rst = request.form.get('rst', '')
-    theme = request.form.get('theme')
-    if theme == 'basic':
-        theme = None
-    html = _rst2html(rst, theme=theme)
-    return html
 
 @app.route('/srv/preview/', methods=['POST', 'GET'])
 def preview():

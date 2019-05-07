@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{{ request.script_root }}{{ MEDIA_URL }}markitup/sets/default/style.css" />
 
     <!-- jQuery -->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}jquery/jquery-3.4.0.min.js"></script>
     <!-- Bootstrap -->
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}bootstrap/js/bootstrap.min.js"></script>
 
@@ -40,67 +40,72 @@
                 reactForRst(getDecodedHash())
             }
         });
-    </script>  
-</head>
+    </script>
+  </head>
   <body>
     <script type="text/javascript">
         var script_root = {{ request.script_root|tojson|safe }};
     </script>
     <!-- Header container-->
     <div class="container-fluid" id="topContainer">
-            <div class="row">
-              <div class="col-12">
-                <div class="row titlebar">
-                  <h1 class="page-header">A-plus LMS course editor</h1>
-                </div>
-              </div>
-              <div class="" id="plussaGuiReport"></div>
-            </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="row titlebar">
+            <h1 class="page-header">A-plus LMS course editor</h1>
           </div>
-          <!-- Credentials container -->
-          <div class="container-fluid">
-            <div class="row">
-                <div class="col-12" id="download">
-                  <form>
-                    <input type="text" id="userId" placeholder="User Id" />
-                    <input type="text" id="privateToken" placeholder="Private Token" />
-                    <button type="button" class="btn btn-primary" id="plussaGuiLoadProjectsBtn">Load Projects</button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          <!-- Two columns container -->
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-3 bluebg">
-                <div id="fileTree"></div>
-              </div>
-              <div class="col-9" id="editor">
-                <div class="row">
-                  <div class="col mt-2" id="buttons">
-                    <span id="plussaGuiProjectName" style="font-weight:bold;"></span>
-                    <span id="plussaGuiFolderPath"></span>
-                    <span id="plussaGuiFilePath"></span>
-                    <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
-                    <button type="button" class="btn btn-primary" id="plussaGuiNewFileBtn">New File</button>
-                    <input type="text" id="plussaGuiFileNameInput" style="display: none;"/>
-                    <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
-                    <div id="loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-                    <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn">HTML Preview</button>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <textarea id="markItUp" rows="15" name="rst" form="preview_html">{ rst }</textarea>
+        </div>
+        <div class="" id="plussaGuiReport"></div>
+      </div>
+    </div>
+    <!-- Credentials container -->
+    <div class="container-fluid">
+      <div class="row">
+          <div class="col-12" id="download">
+            <form>
+              <input type="text" id="userId" placeholder="User Id" />
+              <input type="text" id="privateToken" placeholder="Private Token" />
+              <button type="button" class="btn btn-primary" id="plussaGuiLoadProjectsBtn">Load Projects</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    <!-- Two columns container -->
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-3 bluebg">
+          <div id="fileTree"></div>
+        </div>
+        <div class="col-9" id="editor">
+          <div class="row">
+            <div class="col mt-2" id="buttons">
+              <span id="plussaGuiProjectName" style="font-weight:bold;"></span>
+              <span id="plussaGuiFilePath"></span>
+              <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
+              <button type="button" id="plussaGuiNewFileBtn" class="btn btn-primary" data-toggle="collapse" data-target="#plussaGuiNewFilePanel">New File</button>
+              <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
+              <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn">HTML Preview</button>
+              <div id="loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+              <div class="collapse" id="plussaGuiNewFilePanel">
+                <div style="padding:15px;">
+                  <div id="plussaGuiFolderTree"></div>
+                  Path: <span id="plussaGuiNewFilePath" style="font-size:12px;display: inline;"></span><input type="text" id="plussaGuiFileNameInput" style="display: inline;width:200px;"/>
+                  <button id="plussaGuiCreateFileBtn" type="button" class="btn btn-primary">Create File</button>
                 </div>
               </div>
             </div>
           </div>
           <div class="row">
-            <div class="col container-fluid"">
-              <!--iframe id="browse"></iframe-->
+            <div class="col">
+                <textarea id="markItUp" rows="15" name="rst" form="preview_html">{ rst }</textarea>
             </div>
           </div>
         </div>
-      </body>
-    </html>
+      </div>
+      <div class="row">
+        <div class="col container-fluid">
+          <!--iframe id="browse"></iframe-->
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
