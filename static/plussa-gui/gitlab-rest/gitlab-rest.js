@@ -7,6 +7,7 @@ var plussaGuiGitlabRest = (function() {
   };
 
   var privateToken = "";
+  var userId = 0;
   var commitActions = [];
 
   function doRestQuery(url, privateToken, method, data, success) {
@@ -119,6 +120,13 @@ var plussaGuiGitlabRest = (function() {
 
   }
 
+  var getUserCredentials = function() {
+    return {
+      userId: userId,
+      privateToken: privateToken
+    }
+  }
+
   // Public REST Query API
   return {
       init: init,
@@ -131,7 +139,7 @@ var plussaGuiGitlabRest = (function() {
       moveFile: moveFile,
       deleteFile: deleteFile,
       renameFolder: renameFolder,
-      deleteFolder: deleteFolder
-
+      deleteFolder: deleteFolder,
+      getUserCredentials: getUserCredentials
   };
 })();

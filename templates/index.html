@@ -66,17 +66,22 @@
         <div class="col-9" id="editor">
           <div class="row">
             <div class="col mt-2" id="buttons">
-              <span id="plussaGuiProjectName" style="font-weight:bold;"></span>
-              <span id="plussaGuiFilePath"></span>
               <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
               <button type="button" id="plussaGuiNewFileBtn" class="btn btn-primary" data-toggle="collapse" data-target="#plussaGuiNewFilePanel">New File</button>
               <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
               <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn">HTML Preview</button>
-              <div class="collapse" id="plussaGuiNewFilePanel">
+              <div id="plussaGuiBreadCrumb" style="font-size:14px;margin-top:5px;">
+                <span style="font-weight:bold;">File: </span><span id="plussaGuiProjectName" style="text-decoration:underline;"></span>
+                <span id="plussaGuiFilePath"></span>
+              </div>
+              <div class="collapse" id="plussaGuiNewFilePanel" style="font-size:14px;">
                 <div style="padding:15px;">
-                  <div id="plussaGuiFolderTree"></div>
-                  Path: <span id="plussaGuiNewFilePath" style="font-size:12px;display: inline;"></span><input type="text" id="plussaGuiFileNameInput" style="display: inline;width:200px;"/>
-                  <button id="plussaGuiCreateFileBtn" type="button" class="btn btn-primary">Create File</button>
+                  <span style="font-weight:bold;">New File: </span><span id="plussaGuiTargetProject" style="text-decoration:underline;"></span>
+                  <span id="plussaGuiNewFilePath" style="display: inline;"></span>&nbsp;&sol;&nbsp;
+                  <input type="text" id="plussaGuiPathInput" style="display: inline;width:200px;" />
+                  <button title="Add new folder to the path" type="button" id="plussaGuiAddFolderBtn"><img src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/images/folder-add-icon.png" class="img-fluid" alt="Responsive image"></button>
+                  <button title="Complete file Path" type="button" id="plussaGuiAddFileBtn"><img src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/images/file-add-icon.png" class="img-fluid" alt="Responsive image"></button>
+                  <button id="plussaGuiCancelBtn" type="button" class="btn btn-primary">Cancel</button>
                 </div>
               </div>
             </div>
@@ -89,7 +94,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col container-fluid"">
+        <div class="col container-fluid">
           <!--iframe id="browse"></iframe-->
         </div>
       </div>
