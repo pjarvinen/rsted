@@ -151,6 +151,7 @@ var plussaGuiPreview = (function() {
 
   // Public Preview API
   return {
-    openPreview: openPreview
+    openPreview: openPreview,
+    liveEditing: liveEditing
 };
 })();
