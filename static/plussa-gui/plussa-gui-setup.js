@@ -202,7 +202,7 @@ $(document).ready(function(){
 	});
 
 	$("#plussaGuiNewFileBtn").click(function() {
-
+		$("#plussaGuiPathInput").val("");
 	});
 
 	$("#plussaGuiAddFolderBtn").click(function() {
