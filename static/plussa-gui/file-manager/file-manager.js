@@ -152,7 +152,7 @@ var plussaGuiFileManager = (function() {
   }
 
   function addNewFileMetaData(projectId, filePath) {
-    var newMetaJSON = {
+    var newFileMetaJSON = {
       id: 0,
       name: "",
       type: "blob",
@@ -162,14 +162,38 @@ var plussaGuiFileManager = (function() {
     var pathInfo = plussaGuiFileManager.explodeFilePath(filePath);
     /* If the file has no folder path it resides in the project root folder. */
     if(!pathInfo) {
-      newMetaJSON.name = filePath;
-      (projectJSONs.get(projectId)).push(newMetaJSON); // Add new file meta data JSON to the project root folder.
+      newFileMetaJSON.name = filePath;
+      (projectJSONs.get(projectId)).push(newFileMetaJSON); // Add new file meta data JSON to the project root folder.
       //folder.push(newMetaJSON);
       //projectJSONs.set(projectId, folder);
     }
     else {
-      newMetaJSON.name = pathInfo[1];
-      (findFolder(projectId, pathInfo[0])).push(newMetaJSON);
+      newFileMetaJSON.name = pathInfo[1];
+      var folderJSON = findFolder(projectId, pathInfo[0]);
+      if(folderJSON) {
+        folderJSON.push(newFileMetaJSON);
+      }
+      else {
+        // No previous folder data, save new folder metadata.
+        var newFolderMetaJSON = {
+          id: 0,
+          name: "",
+          type: "tree",
+          path: pathInfo[0],
+          mode: "040000"
+        }
+        var folderInfo = plussaGuiFileManager.explodeFilePath(pathInfo[0]);
+        if(!folderInfo) {
+          // New subfolder for project root folder.
+          newFolderMetaJSON.name = pathInfo[0];
+          (projectJSONs.get(projectId)).push(newFolderMetaJSON);
+        }
+        else {
+          newFolderMetaJSON.name = folderInfo[1];
+          (folderJSONs.get(projectId)).set(pathInfo[0],[newFileMetaJSON]);
+          (findFolder(projectId, folderInfo[0])).push(newFolderMetaJSON);
+        }
+      }
     }
   }
 

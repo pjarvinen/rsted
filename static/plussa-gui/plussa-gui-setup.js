@@ -118,6 +118,7 @@ $(document).ready(function(){
 			$("#plussaGuiNewFilePath").text(addSpaces(path));
 		}
 		$("#plussaGuiTargetProject").text(plussaGuiSettings.activeProjectMeta.name + ": ");
+		$("#plussaGuiProjectName").text(plussaGuiSettings.activeProjectMeta.name + ": ");
 	};
 
 
@@ -213,7 +214,13 @@ $(document).ready(function(){
 
 	$("#plussaGuiAddFileBtn").click(function() {
 		$("#markItUp").val("");
-		var path = $("#plussaGuiNewFilePath").text() + " / " + $("#plussaGuiPathInput").val();
+		var path = $("#plussaGuiNewFilePath").text();
+		if(path.length > 0) {
+			path += " / " + $("#plussaGuiPathInput").val();
+		}
+		else {
+			path = $("#plussaGuiPathInput").val();
+		}
 		$("#plussaGuiFilePath").text(path);
 		$("#plussaGuiNewFileBtn").click();
 	});

@@ -41,20 +41,6 @@ var plussaGuiFileTreeGenerator = (function() {
     return fileTreeHTMLbits.root(fileTreeHTML);
   }
 
-  var generateFolderTreeHTML = function(projectId, treeId, callback) {
-    var folderTreeHTML = '<ul class="jqueryFileTree">'+$("#aPlus-"+projectId).html()+'</ul>';
-    var node = $("<div>"+folderTreeHTML+"</div>");
-    node.find('li[class^=file]').remove();
-    node.find('li[class^=directory]').removeClass("collapsed").addClass("expanded");
-    var spanHTML = "<span>" + node.find('li[id=aPlus-'+projectId+']').children("a").text() + "</span>";
-    node.find('li[id=aPlus-'+projectId+']').children("a").first().replaceWith(spanHTML);
-    node.find('li[id=aPlus-'+projectId+']').removeAttr("id");
-    $("#"+treeId).html(node).find("a").on("click", function(){
-      callback($(this).attr("rel"));
-    });
-    console.log(node.html());
-  }
-
   /*
 	 * Helper function that finds the project id value of the currently open
 	 * GitLab project from the jQuery File Tree. Id attribute of the project
@@ -110,7 +96,6 @@ var plussaGuiFileTreeGenerator = (function() {
   // Public File Tree Generator API
   return {
       generateFileTreeHTML: generateFileTreeHTML,
-      generateFolderTreeHTML: generateFolderTreeHTML,
       getActiveProjectId: getActiveProjectId,
       induceFolderOpenClick: induceFolderOpenClick,
       induceProjectOpenClick: induceProjectOpenClick,
