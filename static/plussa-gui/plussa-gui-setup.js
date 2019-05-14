@@ -5,11 +5,35 @@ var plussaGuiSettings = {
 	activeFileMeta: false,
 	activeFolder: false,
 	errorCallback: function(status, errorThrown) {
-		$('#plussaGuiReport').text("Error: "+status);
+		var elem = $('#plussaGuiReport');
+		var left = $(window).width() - elem.width() - 50;
+		var top = 20;
+		elem.css({"left":left, "top":top});
+		elem.addClass("plussaGuiError");
+		elem.text("Error: "+status);
+		elem.fadeIn(500, function() {
+			setTimeout(function(){
+				elem.fadeOut(2000, function() {
+					elem.text("");
+					elem.removeClass("plussaGuiError");
+				});
+			}, 3000);
+		});
 		console.log("ERROR!\n"+JSON.stringify(errorThrown));
 	},
 	successCallback: function(message) {
-		$('#plussaGuiReport').text(message);
+		var elem = $('#plussaGuiReport');
+		var left = $(window).width() - elem.width() - 50;
+		var top = 20;
+		elem.css({"left":left, "top":top});
+		elem.text(message);
+		elem.fadeIn(500, function() {
+			setTimeout(function(){
+				elem.fadeOut(2000, function() {
+					elem.text("");
+				});
+			}, 3000);
+		});
 	}
 }
 
@@ -40,6 +64,9 @@ $(document).ready(function(){
 
 	// Add space characters to the file path string
 	var addSpaces = function(path) {
+		if(path.length == 0) {
+			return "";
+		}
 		var result = "";
 		for(var i in path) {
 			if(path[i] == "/") {
@@ -54,6 +81,9 @@ $(document).ready(function(){
 
 	// Remove spaces from file path string
 	var removeSpaces = function(path) {
+		if(path.length == 0) {
+			return "";
+		}
 		var result = "";
 		for(var i in path) {
 			if(path[i] == ' ') {
@@ -117,8 +147,7 @@ $(document).ready(function(){
 			}
 			$("#plussaGuiNewFilePath").text(addSpaces(path));
 		}
-		$("#plussaGuiTargetProject").text(plussaGuiSettings.activeProjectMeta.name + ": ");
-		$("#plussaGuiProjectName").text(plussaGuiSettings.activeProjectMeta.name + ": ");
+		$("#plussaGuiTargetProject").text(plussaGuiSettings.activeProjectMeta.name);
 	};
 
 
@@ -174,35 +203,67 @@ $(document).ready(function(){
 
 	$("#plussaGuiSaveFileBtn").click(function() {
 		var projectMeta = plussaGuiSettings.activeProjectMeta;
-		var content = plussaGuiFileManager.isFileLoaded(projectMeta.id + plussaGuiSettings.activeFileMeta.path);
 		var path = removeSpaces($("#plussaGuiFilePath").text());
 		var newContent = $("#markItUp").val();
 		var successReport = "Saved " + path + " in project: " + projectMeta.name;
-		/* Check if it is an update. */
-		if(content) {
-			// TODO: Check if the file contents have truly been altered and only after that proceed with the update.
+		if(!plussaGuiSettings.activeFileMeta) {
+			// Save a new file i.e. open new file panel.
+			if($("#plussaGuiNewFilePanel").hasClass("collapse.show")) {
+				// Panel already open. Do nothing.
+				return;
+			}
+			else {
+				// Open new file panel
+				$("#plussaGuiCancelBtn").click(); // Toggle button for showing/hiding the new file panel
+			}
+		}
+		else {
+			/* Do file update. */
 			console.log("Update file.");
 			plussaGuiGitlabRest.updateFile(projectMeta.id, projectMeta.default_branch, path, newContent, function(result) {
 				plussaGuiFileManager.updateAfterFileSave(projectMeta.id, path, newContent);
 				plussaGuiSettings.successCallback(successReport);
 			});
 		}
-		else {
-			/* Save a new file. */
-			console.log("Create file.");
-			console.log("projectId: "+projectMeta.id+"\nbranch: "+projectMeta.default_branch+"\npath: "+path+"\ncontent: "+newContent);
-			plussaGuiGitlabRest.newFile(projectMeta.id, projectMeta.default_branch, path, newContent, function(result) {
-				plussaGuiFileManager.updateAfterFileSave(projectMeta.id, path, newContent);
-				updateFileTree(projectMeta.id, path);
-				console.log("Created file: "+JSON.stringify(result));
-				plussaGuiSettings.successCallback(successReport);
-				plussaGuiSettings.activeFileMeta = plussaGuiFileManager.getFileMetaData(projectMeta.id, path);
-			});
+	});
+
+	$("#plussaGuiSaveNewFileBtn").click(function() {
+		var projectMeta = plussaGuiSettings.activeProjectMeta;
+		var path = removeSpaces($("#plussaGuiNewFilePath").text());
+		var newContent = $("#markItUp").val();
+		var successReport = "Saved new file " + path + " in project: " + projectMeta.name;
+		// TODO: Validate input data.
+		if(path.length > 0) {
+			// Concatenate file path and filename.
+			path += "/" + $("#plussaGuiPathInput").val();
 		}
+		else {
+			// No file path data, path equals filename
+			path = $("#plussaGuiPathInput").val();
+		}
+		/* Save a new file. */
+		console.log("Create file.");
+		console.log("projectId: "+projectMeta.id+"\nbranch: "+projectMeta.default_branch+"\npath: "+path+"\ncontent: "+newContent);
+		plussaGuiGitlabRest.newFile(projectMeta.id, projectMeta.default_branch, path, newContent, function(result) {
+			plussaGuiFileManager.updateAfterFileSave(projectMeta.id, path, newContent);
+			updateFileTree(projectMeta.id, path);
+			console.log("Created file: "+JSON.stringify(result));
+			plussaGuiSettings.successCallback(successReport);
+			plussaGuiSettings.activeFileMeta = plussaGuiFileManager.getFileMetaData(projectMeta.id, path);
+			$("#plussaGuiCancelBtn").click(); // Close new file panel and reset form.
+			$("#plussaGuiFilePath").text(addSpaces(path));
+			$("#plussaGuiProjectName").text(projectMeta.name + ": ");
+		});
+
 	});
 
 	$("#plussaGuiNewFileBtn").click(function() {
+		$("#markItUp").val("");
 		$("#plussaGuiPathInput").val("");
+		$("#plussaGuiFilePath").text("");
+		$("#plussaGuiProjectName").text("");
+		plussaGuiSettings.activeFileMeta = false;
+		$("#markItUp").focus();
 	});
 
 	$("#plussaGuiAddFolderBtn").click(function() {
@@ -210,25 +271,13 @@ $(document).ready(function(){
 		var newFolder = $("#plussaGuiPathInput").val();
 		$("#plussaGuiNewFilePath").text(path + " / " + newFolder);
 		$("#plussaGuiPathInput").val("");
-	});
-
-	$("#plussaGuiAddFileBtn").click(function() {
-		$("#markItUp").val("");
-		var path = $("#plussaGuiNewFilePath").text();
-		if(path.length > 0) {
-			path += " / " + $("#plussaGuiPathInput").val();
-		}
-		else {
-			path = $("#plussaGuiPathInput").val();
-		}
-		$("#plussaGuiFilePath").text(path);
-		$("#plussaGuiNewFileBtn").click();
+		$(this).hide();
 	});
 
 	$("#plussaGuiCancelBtn").click(function() {
 		$("#plussaGuiNewFilePath").text("");
 		$("#plussaGuiPathInput").val("");
-		$("#plussaGuiNewFileBtn").click();
+		$("#plussaGuiAddFolderBtn").show();
 	});
 
 	$("#plussaGuiDeleteFileBtn").click(function() {
@@ -242,6 +291,8 @@ $(document).ready(function(){
 			updateFileTree(projectMeta.id, path);
 			plussaGuiSettings.successCallback("Deleted " + path + " from " + projectMeta.name);
 			$("#plussaGuiFilePath").text("");
+			$("#plussaGuiProjectName").text("");
+			plussaGuiSettings.activeFileMeta = false;
 			console.log("Deleted file: "+ path);
 		});
 	});

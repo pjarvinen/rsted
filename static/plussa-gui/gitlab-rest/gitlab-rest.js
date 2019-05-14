@@ -7,6 +7,7 @@ var plussaGuiGitlabRest = (function() {
   };
 
   var privateToken = "";
+  var userId = "";
   var userId = 0;
   var commitActions = [];
 
@@ -54,6 +55,7 @@ var plussaGuiGitlabRest = (function() {
   }
 
   var loadProjectsInfo = function(userId, privateToken, callback) {
+    plussaGuiGitlabRest.userId = userId;
     plussaGuiGitlabRest.privateToken = privateToken;
     var url = plussaGuiGitlabRest.baseUrl + "users/" + userId + "/projects";
     doRestQuery(url, privateToken, "GET", {}, callback);
