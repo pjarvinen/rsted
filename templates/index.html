@@ -46,48 +46,70 @@
       </div>
     </div>
     <!-- Credentials container -->
-    <div class="container-fluid">
-      <div class="row">
-          <div class="col-12" id="download">
+    <div class="container-fluid" id="bar">
+      <div class="row no-gutters">
+          <div class="col-8" id="download">
             <form>
               <input type="text" id="userId" placeholder="User Id" />
               <input type="text" id="privateToken" placeholder="Private Token" />
               <button type="button" class="btn btn-primary" id="plussaGuiLoadProjectsBtn">Load Projects</button>
             </form>
           </div>
-        </div>
-      </div>
-    <!-- Two columns container -->
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-3 bluebg">
-          <div id="fileTree"></div>
-        </div>
-        <div class="col-9" id="editor">
-          <div class="row">
-            <div class="col mt-2" id="buttons">
-              <span id="plussaGuiProjectName" style="font-weight:bold;"></span>
-              <span id="plussaGuiFolderPath"></span>
-              <span id="plussaGuiFilePath"></span>
-              <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
-              <button type="button" class="btn btn-primary" id="plussaGuiNewFileBtn">New File</button>
-              <input type="text" id="plussaGuiFileNameInput" style="display: none;"/>
-              <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
-              <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn">HTML Preview</button>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <textarea id="markItUp" rows="15" name="rst" form="save_as_pdf"></textarea>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col container-fluid"">
-          <!--iframe id="browse"></iframe-->
+          <div class="col"><!-- Tabs -->
+            <ul class="nav nav-pills nav-justified" id="tabs" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="editor" aria-selected="true">Editor</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#log" role="tab" aria-controls="log" aria-selected="false">Log</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="contact-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="false">Info</a>
+              </li>
+            </ul></div>
         </div>
       </div>
     </div>
+    
+    <div class="tab-content" id="tabContent">
+      <div class="tab-pane fade show active" id="edit" role="tabpanel" aria-labelledby="editor-tab">
+      <!-- Two columns container -->
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-3 bluebg">
+              <div id="fileTree"></div>
+            </div>
+            <div class="col-9" id="editor">
+              <div class="row">
+                <div class="col mt-2" id="buttons">
+                  <span id="plussaGuiProjectName" style="font-weight:bold;"></span>
+                  <span id="plussaGuiFolderPath"></span>
+                  <span id="plussaGuiFilePath"></span>
+                  <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
+                  <button type="button" class="btn btn-primary" id="plussaGuiNewFileBtn">New File</button>
+                  <input type="text" id="plussaGuiFileNameInput" style="display: none;"/>
+                  <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
+                  <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn">HTML Preview</button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <textarea id="markItUp" rows="15" name="rst" form="save_as_pdf"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col container-fluid">
+            <!--iframe id="browse"></iframe-->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="log" role="tabpanel" aria-labelledby="log-tab"><div class="col container-fluid""><p>Tähän historia logia</p></div></div>
+      <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab"><div class="col container-fluid""><p>Tässä ohjeet kuinka lisätään kursseja</p></div></div>
+    </div>
+
+    
   </body>
 </html>
