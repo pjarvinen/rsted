@@ -33,14 +33,6 @@
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/gitlab-rest/gitlab-rest.js"></script>
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/plussa-gui-setup.js"></script>
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/html-preview/preview.js"></script>
-    <script type="text/javascript">
-        var js_params = {{ js_params|tojson|safe }};
-        $(function() {
-            if (location.hash) {
-                reactForRst(getDecodedHash())
-            }
-        });
-    </script>
   </head>
   <body>
     <script type="text/javascript">
@@ -53,8 +45,8 @@
           <div class="row titlebar">
             <h1 class="page-header">A-plus LMS course editor</h1>
           </div>
+          <div id="plussaGuiReport" style="display:none;font-size:14px;width:200px;height:100px;background-color:white;border:1px solid gray;padding:14px;position:fixed;z-index:1000;border-radius:10px;"></div>
         </div>
-        <div class="" id="plussaGuiReport"></div>
       </div>
     </div>
     <!-- Credentials container -->
@@ -78,25 +70,30 @@
         <div class="col-9" id="editor">
           <div class="row">
             <div class="col mt-2" id="buttons">
-              <span id="plussaGuiProjectName" style="font-weight:bold;"></span>
-              <span id="plussaGuiFilePath"></span>
               <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
-              <button type="button" id="plussaGuiNewFileBtn" class="btn btn-primary" data-toggle="collapse" data-target="#plussaGuiNewFilePanel">New File</button>
+              <button type="button" id="plussaGuiNewFileBtn" class="btn btn-primary">New File</button>
               <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
               <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn">HTML Preview</button>
               <div id="loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-              <div class="collapse" id="plussaGuiNewFilePanel">
+              <div class="collapse" id="plussaGuiNewFilePanel" style="font-size:14px;">
                 <div style="padding:15px;">
-                  <div id="plussaGuiFolderTree"></div>
-                  Path: <span id="plussaGuiNewFilePath" style="font-size:12px;display: inline;"></span><input type="text" id="plussaGuiFileNameInput" style="display: inline;width:200px;"/>
-                  <button id="plussaGuiCreateFileBtn" type="button" class="btn btn-primary">Create File</button>
+                  <span style="font-weight:bold;">New File: </span><span id="plussaGuiTargetProject" style="text-decoration:underline;"></span>
+                  <span id="plussaGuiNewFilePath" style="display: inline;"></span>&nbsp;&sol;&nbsp;
+                  <input type="text" id="plussaGuiPathInput" style="display: inline;width:200px;" />
+                  <button title="Add new folder to the path" type="button" id="plussaGuiAddFolderBtn"><img src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/images/folder-add-icon.png" class="img-fluid" alt="Responsive image"></button>
+                  <button type="button" class="btn btn-primary" id="plussaGuiSaveNewFileBtn">Save</button>
+                  <button id="plussaGuiCancelBtn" type="button" class="btn btn-primary" data-toggle="collapse" data-target="#plussaGuiNewFilePanel">Cancel</button>
                 </div>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col">
-                <textarea id="markItUp" rows="15" name="rst" form="preview_html">{ rst }</textarea>
+              <div id="plussaGuiBreadCrumb" style="font-size:14px;margin-top:5px;">
+                <span style="font-weight:bold;">File: </span><span id="plussaGuiProjectName" style="text-decoration:underline;"></span>&nbsp;
+                <span id="plussaGuiFilePath"></span>
+              </div>
+              <textarea id="markItUp" rows="15" name="rst" form="preview_html">{ rst }</textarea>
             </div>
           </div>
         </div>
