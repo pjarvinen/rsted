@@ -39,7 +39,7 @@ class RSTCompiler:
 
     def compile_rst(self):
         try:
-            subprocess.check_call(["make", "html"], cwd=self.dirpath, shell=True)
+            subprocess.call("make html", cwd=self.dirpath, shell=True)
         except subprocess.CalledProcessError as err:
             print("Error while building html: {0}".format(err))
             return 1
