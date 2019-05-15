@@ -8,10 +8,10 @@ var plussaGuiPreview = (function() {
 
     var openPreview = function(projectid, filepath) {
         // Set private token
-        //var privateToken = document.getElementById('privateToken').value;
+        var privateToken = document.getElementById('privateToken').value;
         
-        var userCredentials = plussaGuiGitlabRest.getUserCredentials;
-        var privateToken = userCredentials.privateToken;
+        //var userCredentials = plussaGuiGitlabRest.getUserCredentials;
+        //var privateToken = userCredentials.privateToken;
         var rst = document.getElementsByTagName('textarea')[0].value;
         // Set all needed variables
         var data = 'token=' + privateToken + '&project=' + projectid + "&filepath=" + filepath + "&rst=" + rst;

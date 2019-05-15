@@ -1,5 +1,7 @@
-import requests, io, subprocess, os, sys, shutil, random
+import requests, subprocess, os, sys, shutil, random
 from zipfile import ZipFile
+from io import BytesIO
+import urllib.request
 
 base_url = "https://gitlab.com/api/v4/projects/"
 
@@ -18,17 +20,21 @@ class RSTCompiler:
         url = base_url + str(self.project_id) + "/repository/archive.zip"
         # Set Private Token as header
         headers = {'PRIVATE-TOKEN': self.token}
+        print(headers)
         # Make the API request
-        r = requests.get(url, headers=headers, stream=True)
-        try:
-            with ZipFile(io.StringIO(r.content)) as zipObj:
-                namelist = zipObj.namelist()
-                zipObj.extractall("temp")
-                os.rename("temp/" + str(namelist[0])[:-1], "temp/" + str(self.project_id))
-                return self.dirpath
-        except:
-            print("Unexpected error while extracting zip file: ", sys.exc_info()[0])
-            return None
+        #r = requests.get(url, headers=headers, stream=True)
+        req = urllib.request.Request(url, headers=headers)
+        r = urllib.request.urlopen(req)
+        print("url")
+        #try:
+        with ZipFile(BytesIO(r.read())) as zipObj:
+            namelist = zipObj.namelist()
+            zipObj.extractall("temp")
+            os.rename("temp/" + str(namelist[0])[:-1], "temp/" + str(self.project_id))
+            return self.dirpath
+        #except:
+        #    print("Unexpected error while extracting zip file: ", sys.exc_info()[0])
+        #    return None
 
 
     def compile_rst(self):
@@ -49,6 +55,7 @@ class RSTCompiler:
 
     def directory_exists(self):
         if os.path.isdir("temp/" + str(self.project_id)):
+            print (os.path)
             return True
         else:
             return False
