@@ -50,9 +50,7 @@ def preview():
         return ""
     else:
         compiler = RSTCompiler(project, token, filepath)
-        if not compiler.directory_exists():
-            print("Directory doesnt exist")
-            compiler.download_archive()
+        compiler.download_archive()
         with open(compiler.dirpath + filepath, "w") as rf:
             rf.write(rst)
         compiler.compile_rst()
