@@ -165,6 +165,7 @@ var plussaGuiFileManager = (function() {
         else {
           newFolderMetaJSON.name = folderInfo[1];
           (folderJSONs.get(projectId)).set(pathInfo[0],[newFileMetaJSON]);
+          (findFolder(projectId, folderInfo[0])).push(newFolderMetaJSON);
         }
       }
     }
