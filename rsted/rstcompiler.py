@@ -1,6 +1,7 @@
 import requests, subprocess, os, sys, shutil, random
 from zipfile import ZipFile
 from io import BytesIO
+import urllib
 import urllib.request
 
 base_url = "https://gitlab.com/api/v4/projects/"
