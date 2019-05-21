@@ -4,7 +4,7 @@ var plussaGuiFileManager = (function() {
   var userProjects = new Map(); // All user projects.
   var projectJSONs = new Map(); // Root file trees of every loaded user project.
   var folderJSONs = new Map(); // Project id keys map folder JSON maps, which in turn have folder paths as keys.
-  var fileJSONs = new Map(); // All downloaded file contents with file id (SHA value) keys.
+  var fileJSONs = new Map(); // All downloaded file contents with (projectId + filepath) keys.
 
   /* Helper function for sorting files and folders. */
   function compareItems(a, b) {
@@ -124,7 +124,7 @@ var plussaGuiFileManager = (function() {
     return false;
   }
 
-  function addNewFileMetaData(projectId, filePath) {
+  function saveNewMetaData(projectId, filePath) {
     var newFileMetaJSON = {
       id: 0,
       name: "",
@@ -142,13 +142,10 @@ var plussaGuiFileManager = (function() {
     else {
       newFileMetaJSON.name = pathInfo[1];
       var folderJSON = findFolder(projectId, pathInfo[0]);
-      if(folderJSON) {
-        // Add file metadata to existing folder
-        folderJSON.push(newFileMetaJSON);
-        folderJSON.sort(compareItems);
-      }
-      else {
-        // No existing folder, save new folder metadata.
+      if(!folderJSON) {
+        /* No existing folder, save new folder metadata to the parent folder AND
+         * a new entry to the folder metadata map.
+         */
         var newFolderMetaJSON = {
           id: 0,
           name: "",
@@ -156,9 +153,7 @@ var plussaGuiFileManager = (function() {
           path: pathInfo[0],
           mode: "040000"
         }
-        console.log("No existing folder, save new folder metadata.\n"+JSON.stringify(newFolderMetaJSON));
         var folderInfo = explodeFilePath(pathInfo[0]);
-        console.log("Folder info: "+folderInfo);
         if(!folderInfo) {
           // New subfolder for project root folder.
           newFolderMetaJSON.name = pathInfo[0];
@@ -167,9 +162,16 @@ var plussaGuiFileManager = (function() {
         }
         else {
           newFolderMetaJSON.name = folderInfo[1];
-          (folderJSONs.get(projectId)).set(pathInfo[0],[newFileMetaJSON]);
-          (findFolder(projectId, folderInfo[0])).push(newFolderMetaJSON);
+          ((folderJSONs.get(projectId)).get(folderInfo[0])).push(newFolderMetaJSON);
+          ((folderJSONs.get(projectId)).get(folderInfo[0])).sort(compareItems);
         }
+        // Create a new array of file metadata JSON items with a new folder path as map key
+        (folderJSONs.get(projectId)).set(pathInfo[0], [newFileMetaJSON]);
+      }
+      else {
+        // Add file metadata to existing metadata array
+        folderJSON.push(newFileMetaJSON);
+        folderJSON.sort(compareItems);
       }
     }
   }
@@ -275,7 +277,7 @@ var plussaGuiFileManager = (function() {
     }
     else {
       saveNewFileJSON(mapId, newContent);
-      addNewFileMetaData(projectId, filePath);
+      saveNewMetaData(projectId, filePath);
     }
   }
 

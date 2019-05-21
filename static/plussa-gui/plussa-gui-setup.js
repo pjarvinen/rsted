@@ -53,8 +53,8 @@ $(document).ready(function(){
 	var updateFileTree = function(projectId, path) {
 		var pathData = plussaGuiFileManager.explodeFilePath(path); // false if path is empty or just a file name
 		if(pathData) {
-			/* Reload project subfolder, if it exists. */
-			if(plussaGuiFileManager.isFolderLoaded(pathData[0])) {
+			/* Open project subfolder, if it hasn't been deleted. */
+			if(plussaGuiFileManager.isFolderLoaded(projectId, pathData[0])) {
 				plussaGuiFileTreeGenerator.induceFolderOpenClick(projectId, pathData[0]);
 			}
 			else {
@@ -238,7 +238,6 @@ $(document).ready(function(){
 		var path = removeSpaces($("#plussaGuiNewFilePath").text());
 		console.log("Path after spaces removal: "+path);
 		var newContent = $("#markItUp").val();
-		var successReport = "Saved new file " + path + " in project: " + projectMeta.name;
 		// TODO: Validate input data.
 		if(path.length > 0) {
 			// Concatenate file path and filename.
@@ -248,6 +247,7 @@ $(document).ready(function(){
 			// No file path data, path equals filename
 			path = $("#plussaGuiPathInput").val();
 		}
+		var successReport = "Saved new file " + path + " in project: " + projectMeta.name;
 		/* Save a new file. */
 		console.log("Create file.");
 		console.log("projectId: "+projectMeta.id+"\nbranch: "+projectMeta.default_branch+"\npath: "+path+"\ncontent: "+newContent);
