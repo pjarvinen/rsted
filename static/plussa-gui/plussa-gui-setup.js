@@ -51,11 +51,22 @@ $(document).ready(function(){
 
 	// Update jQuery File Tree
 	var updateFileTree = function(projectId, path) {
+		console.log("File tree update: path="+path);
 		var pathData = plussaGuiFileManager.explodeFilePath(path); // false if path is empty or just a file name
 		if(pathData) {
+			console.log("File tree update: pathData="+pathData);
 			/* Open project subfolder, if it hasn't been deleted. */
 			if(plussaGuiFileManager.isFolderLoaded(projectId, pathData[0])) {
-				plussaGuiFileTreeGenerator.induceFolderOpenClick(projectId, pathData[0]);
+				if(plussaGuiFileTreeGenerator.induceFolderOpenClick(projectId, pathData[0])) {
+					return;
+				}
+				else {
+					// The folder node was not found. Re-generate parent node to get to the desired node.
+					var subPathData = plussaGuiFileManager.explodeFilePath(pathData[0]);
+					if(plussaGuiFileTreeGenerator.induceFolderOpenClick(projectId, subPathData[0])) {
+						plussaGuiFileTreeGenerator.induceFolderOpenClick(projectId, pathData[0]);
+					}
+				}
 			}
 			else {
 				// Move down the file tree until existing sub folder, eventually the project root folder, is found.
@@ -310,6 +321,10 @@ $(document).ready(function(){
 
 	$("#plussaGuiPreviewBtn").click(function() {
 		console.log("Preview button clicked!");
+	});
+
+	$("#plussaGuiPublishBtn").click(function() {
+		console.log("Publish button clicked!");
 	});
 
 });
