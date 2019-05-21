@@ -90,31 +90,34 @@ var plussaGuiFileManager = (function() {
     }
   }
 
-  function deleteFileMetaData(projectId, filePath) {
-    console.log("Before: \n"+JSON.stringify(findFolderForFile(projectId, filePath)));
-    var folderJSONarray = findFolderForFile(projectId, filePath);
+  function deleteMetaData(projectId, path) {
+    console.log("Before: \n"+JSON.stringify(findFolderForFile(projectId, path)));
+    var folderJSONarray = findFolderForFile(projectId, path);
+    var fileTreeUpdatePath = "";
     var i = 0;
     var l = folderJSONarray.length;
     for(i = 0; i < l; ++i) {
-      if(folderJSONarray[i].path == filePath) {
+      if(folderJSONarray[i].path == path) {
         folderJSONarray.splice(i, 1);
-        var lastIndexOfSlash = filePath.lastIndexOf('/');
+        var lastIndexOfSlash = path.lastIndexOf('/');
         if(lastIndexOfSlash == -1) {
           // Update project root folder.
           projectJSONs.set(projectId, folderJSONarray);
         }
         else {
           // Update project sub folder.
-          var folderPath = filePath.substring(0, lastIndexOfSlash);
+          var folderPath = path.substring(0, lastIndexOfSlash);
           if(folderJSONarray.length == 0) {
-            // Remove empty meta data folder.
+            // Remove empty metadata folder.
             (folderJSONs.get(projectId)).delete(folderPath);
+            // Remove folder metadata from its parent folder
+            deleteMetaData(projectId, folderPath);
           }
           else {
             (folderJSONs.get(projectId)).set(folderPath, folderJSONarray);
           }
         }
-        console.log("After: \n"+JSON.stringify(findFolderForFile(projectId, filePath)));
+        console.log("After: \n"+JSON.stringify(findFolderForFile(projectId, path)));
         return true;
       }
     }
@@ -129,14 +132,12 @@ var plussaGuiFileManager = (function() {
       path: filePath,
       mode: "100644"
     }
-    var pathInfo = plussaGuiFileManager.explodeFilePath(filePath);
+    var pathInfo = explodeFilePath(filePath);
     /* If the file has no folder path it resides in the project root folder. */
     if(!pathInfo) {
       newFileMetaJSON.name = filePath;
       (projectJSONs.get(projectId)).push(newFileMetaJSON); // Add new file meta data JSON to the project root folder.
       (projectJSONs.get(projectId)).sort(compareItems);
-      //folder.push(newMetaJSON);
-      //projectJSONs.set(projectId, folder);
     }
     else {
       newFileMetaJSON.name = pathInfo[1];
@@ -147,7 +148,7 @@ var plussaGuiFileManager = (function() {
         folderJSON.sort(compareItems);
       }
       else {
-        // No previous folder, save new folder metadata.
+        // No existing folder, save new folder metadata.
         var newFolderMetaJSON = {
           id: 0,
           name: "",
@@ -155,7 +156,9 @@ var plussaGuiFileManager = (function() {
           path: pathInfo[0],
           mode: "040000"
         }
-        var folderInfo = plussaGuiFileManager.explodeFilePath(pathInfo[0]);
+        console.log("No existing folder, save new folder metadata.\n"+JSON.stringify(newFolderMetaJSON));
+        var folderInfo = explodeFilePath(pathInfo[0]);
+        console.log("Folder info: "+folderInfo);
         if(!folderInfo) {
           // New subfolder for project root folder.
           newFolderMetaJSON.name = pathInfo[0];
@@ -261,7 +264,7 @@ var plussaGuiFileManager = (function() {
 
   var updateAfterFileDelete = function(projectId, filePath) {
     fileJSONs.delete(projectId + filePath); // Remove file content from File Manager.
-    deleteFileMetaData(projectId, filePath);
+     return deleteMetaData(projectId, filePath);
   }
 
   var updateAfterFileSave = function(projectId, filePath, newContent) {
@@ -276,7 +279,13 @@ var plussaGuiFileManager = (function() {
     }
   }
 
+  /*
+   * Helper function that returns filepath data as [folder path, filename] if possible.
+   */
   var explodeFilePath = function(filePath) {
+    if(filePath.length == 0) {
+      return false;
+    }
     var lastIndexOfSlash = filePath.lastIndexOf('/');
     if(lastIndexOfSlash != -1) {
       return [filePath.substring(0, lastIndexOfSlash), filePath.substring(lastIndexOfSlash+1, filePath.length)];

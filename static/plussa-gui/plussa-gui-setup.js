@@ -51,10 +51,16 @@ $(document).ready(function(){
 
 	// Update jQuery File Tree
 	var updateFileTree = function(projectId, path) {
-		var pathData = plussaGuiFileManager.explodeFilePath(path); // false if path is just a file name
+		var pathData = plussaGuiFileManager.explodeFilePath(path); // false if path is empty or just a file name
 		if(pathData) {
-			/* Reload project subfolder. */
-			plussaGuiFileTreeGenerator.induceFolderOpenClick(projectId, pathData[0]);
+			/* Reload project subfolder, if it exists. */
+			if(plussaGuiFileManager.isFolderLoaded(pathData[0])) {
+				plussaGuiFileTreeGenerator.induceFolderOpenClick(projectId, pathData[0]);
+			}
+			else {
+				// Move down the file tree until existing sub folder, eventually the project root folder, is found.
+				updateFileTree(projectId, pathData[0]);
+			}
 		}
 		else {
 			/* No path data besides the file name. Reload project root folder. */
@@ -99,7 +105,7 @@ $(document).ready(function(){
 	/* Function that jQuery File Tree Plugin calls replacing the original
 	 * $.post(...) query in the plugin code.
 	 * This function opens a folder i.e. loads the folder content from GitLab
-	 * REST API. The project root folders require different treatment from
+	 * REST API. Project root folders require different treatment from
 	 * the project sub folders.
 	 */
 	var fileTreeScript = function(node, path, callback) {
@@ -230,6 +236,7 @@ $(document).ready(function(){
 	$("#plussaGuiSaveNewFileBtn").click(function() {
 		var projectMeta = plussaGuiSettings.activeProjectMeta;
 		var path = removeSpaces($("#plussaGuiNewFilePath").text());
+		console.log("Path after spaces removal: "+path);
 		var newContent = $("#markItUp").val();
 		var successReport = "Saved new file " + path + " in project: " + projectMeta.name;
 		// TODO: Validate input data.
@@ -269,7 +276,12 @@ $(document).ready(function(){
 	$("#plussaGuiAddFolderBtn").click(function() {
 		var path = $("#plussaGuiNewFilePath").text();
 		var newFolder = $("#plussaGuiPathInput").val();
-		$("#plussaGuiNewFilePath").text(path + " / " + newFolder);
+		if(path.length > 0) {
+			$("#plussaGuiNewFilePath").text(path + " / " + newFolder);
+		}
+		else {
+			$("#plussaGuiNewFilePath").text(newFolder);
+		}
 		$("#plussaGuiPathInput").val("");
 		$(this).hide();
 	});
@@ -285,8 +297,7 @@ $(document).ready(function(){
 		var branch = projectMeta.default_branch;
 		var path = removeSpaces($("#plussaGuiFilePath").text());
 		plussaGuiGitlabRest.deleteFile(projectMeta.id, branch, path, function(result) {
-			plussaGuiFileManager.updateAfterFileDelete(projectMeta.id, plussaGuiSettings.activeFileMeta.path);
-			plussaGuiSettings.activeFileMeta = false;
+			plussaGuiFileManager.updateAfterFileDelete(projectMeta.id, path);
 			$("#markItUp").val("");
 			updateFileTree(projectMeta.id, path);
 			plussaGuiSettings.successCallback("Deleted " + path + " from " + projectMeta.name);
