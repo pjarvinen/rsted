@@ -20,7 +20,7 @@ var plussaGuiPreview = (function() {
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         // Send POST request with data
         xhr.send(data);
-        document.getElementById("loader").style.display = "block";
+        document.getElementById("preview_loader").style.display = "block";
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 var response = xhr.responseText;
@@ -34,11 +34,29 @@ var plussaGuiPreview = (function() {
                     }
                     preWindow = window.open(response, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,width=850,height=700");
                 }
-                document.getElementById("loader").style.display = "none";
+                document.getElementById("preview_loader").style.display = "none";
             }
         };
     }
 
+    var publish = function(projectid, filepath) {
+        // Set private token
+        var privateToken = document.getElementById('privateToken').value;
+        
+        // Set all needed variables
+        var data = 'token=' + privateToken + '&project=' + projectid + "&filepath=" + filepath;
+        xhr = new XMLHttpRequest();
+        xhr.open("POST", script_root + "/srv/publish/");
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        // Send POST request with data
+        xhr.send(data);
+        document.getElementById("publish_loader").style.display = "block";
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                document.getElementById("publish_loader").style.display = "none";
+            }
+        };
+    }
 
     function genPreview() {
         if (preWindow != null) {
@@ -155,6 +173,7 @@ var plussaGuiPreview = (function() {
   // Public Preview API
   return {
     openPreview: openPreview,
+    publish: publish,
     liveEditing: liveEditing
 };
 })();

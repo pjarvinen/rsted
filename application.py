@@ -58,6 +58,20 @@ def preview():
         compiler.compile_rst()
         return compiler.get_html()
 
+@app.route('/srv/publish/', methods=['POST', 'GET'])
+def publish():
+    token = request.form.get('token', '')
+    project = request.form.get('project', '')
+    filepath = request.form.get('filepath', '')
+    if not token or not project or not filepath:
+        return ""
+    else:
+        compiler = RSTCompiler(project, token, filepath)
+        compiler.download_archive()
+        compiler.compile_rst()
+        compiler.publish()
+        return compiler.get_html()
+
 @app.route('/srv/loadproject/', methods=['POST', 'GET'])
 def loadproject():
     token = request.form.get('token', '')

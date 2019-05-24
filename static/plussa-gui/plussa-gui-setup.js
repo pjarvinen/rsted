@@ -324,7 +324,7 @@ $(document).ready(function(){
 	});
 
 	$("#plussaGuiPublishBtn").click(function() {
-		console.log("Publish button clicked!");
+		plussaGuiPreview.publish(plussaGuiSettings.activeProjectId, plussaGuiSettings.activeFileMeta.path);
 	});
 
 });
