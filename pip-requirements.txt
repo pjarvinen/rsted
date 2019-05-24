@@ -3,3 +3,4 @@ flask
 
 # For HTML Preview + RST Compiler
 requests
+python-gitlab
