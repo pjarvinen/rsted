@@ -1,5 +1,6 @@
 flup
 flask
+rst2pdf
 
-# For HTML Preview + RST Compiler
-requests
+# Docutils (for rst2html)
+docutils

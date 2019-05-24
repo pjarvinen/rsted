@@ -320,11 +320,7 @@ $(document).ready(function(){
 	});
 
 	$("#plussaGuiPreviewBtn").click(function() {
-		plussaGuiPreview.openPreview(plussaGuiSettings.activeProjectId, plussaGuiSettings.activeFileMeta.path);
-	});
-
-	$("#plussaGuiPublishBtn").click(function() {
-		plussaGuiPreview.publish(plussaGuiSettings.activeProjectId, plussaGuiSettings.activeFileMeta.path);
+		console.log("Preview button clicked!");
 	});
 
 	$("#plussaGuiPublishBtn").click(function() {
