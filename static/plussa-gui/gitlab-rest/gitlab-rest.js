@@ -7,8 +7,11 @@ var plussaGuiGitlabRest = (function() {
   };
 
   var privateToken = "";
+<<<<<<< HEAD
   var userId = "";
   var userId = 0;
+=======
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
   var commitActions = [];
 
   function doRestQuery(url, privateToken, method, data, success) {
@@ -23,7 +26,11 @@ var plussaGuiGitlabRest = (function() {
       // The type of data we expect back
       dataType: "json",
       crossDomain: true,
+<<<<<<< HEAD
       contentType: "application/json; charset=UTF-8",
+=======
+      contentType: "application/json",
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
       processData: false,
       // Additional header key-value pairs
       headers: {
@@ -55,7 +62,10 @@ var plussaGuiGitlabRest = (function() {
   }
 
   var loadProjectsInfo = function(userId, privateToken, callback) {
+<<<<<<< HEAD
     plussaGuiGitlabRest.userId = userId;
+=======
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
     plussaGuiGitlabRest.privateToken = privateToken;
     var url = plussaGuiGitlabRest.baseUrl + "users/" + userId + "/projects";
     doRestQuery(url, privateToken, "GET", {}, callback);
@@ -122,6 +132,7 @@ var plussaGuiGitlabRest = (function() {
 
   }
 
+<<<<<<< HEAD
   var getUserCredentials = function() {
     return {
       userId: userId,
@@ -129,6 +140,8 @@ var plussaGuiGitlabRest = (function() {
     }
   }
 
+=======
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
   // Public REST Query API
   return {
       init: init,
@@ -141,7 +154,14 @@ var plussaGuiGitlabRest = (function() {
       moveFile: moveFile,
       deleteFile: deleteFile,
       renameFolder: renameFolder,
+<<<<<<< HEAD
       deleteFolder: deleteFolder,
       getUserCredentials: getUserCredentials
   };
 })();
+=======
+      deleteFolder: deleteFolder
+
+  };
+})();
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3

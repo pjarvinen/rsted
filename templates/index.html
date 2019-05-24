@@ -32,6 +32,7 @@
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/file-tree-generator/file-tree-generator.js"></script>
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/gitlab-rest/gitlab-rest.js"></script>
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/plussa-gui-setup.js"></script>
+<<<<<<< HEAD
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/html-preview/preview.js"></script>
   </head>
   <body>
@@ -39,6 +40,11 @@
       var script_root = {{ request.script_root|tojson|safe }};
   </script>    
   <!-- Header container-->
+=======
+  </head>
+  <body>
+    <!-- Header container-->
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
     <div class="container-fluid" id="topContainer">
       <div class="row">
         <div class="col-12">
@@ -50,9 +56,15 @@
       </div>
     </div>
     <!-- Credentials container -->
+<<<<<<< HEAD
     <div class="container-fluid p-0" id="bar">
       <div class="row no-gutters">
           <div class="col-8 pl-4" id="download">
+=======
+    <div class="container-fluid" id="bar">
+      <div class="row no-gutters">
+          <div class="col-8" id="download">
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
             <form>
               <input type="text" id="userId" placeholder="User Id" />
               <input type="text" id="privateToken" placeholder="Private Token" />
@@ -86,6 +98,7 @@
             <div class="col-9" id="editor">
               <div class="row">
                 <div class="col mt-2" id="buttons">
+<<<<<<< HEAD
                     <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
                     <button type="button" id="plussaGuiNewFileBtn" class="btn btn-primary">New File</button>
                     <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
@@ -101,10 +114,21 @@
                         <button id="plussaGuiCancelBtn" type="button" class="btn btn-primary" data-toggle="collapse" data-target="#plussaGuiNewFilePanel">Cancel</button>
                       </div>
                     </div>
+=======
+                  <span id="plussaGuiProjectName" style="font-weight:bold;"></span>
+                  <span id="plussaGuiFolderPath"></span>
+                  <span id="plussaGuiFilePath"></span>
+                  <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
+                  <button type="button" class="btn btn-primary" id="plussaGuiNewFileBtn">New File</button>
+                  <input type="text" id="plussaGuiFileNameInput" style="display: none;"/>
+                  <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
+                  <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn">HTML Preview</button>
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
                 </div>
               </div>
               <div class="row">
                 <div class="col">
+<<<<<<< HEAD
                     <div id="plussaGuiBreadCrumb" style="font-size:14px;margin-top:5px;">
                       <span style="font-weight:bold;">File: </span><span id="plussaGuiProjectName" style="text-decoration:underline;"></span>&nbsp;
                       <span id="plussaGuiFilePath"></span>
@@ -113,6 +137,11 @@
                 </div>
               </div>
               <button type="button" class="btn btn-primary btn-right" id="plussaGuiPublishBtn">Publish</button>
+=======
+                  <textarea id="markItUp" rows="15" name="rst" form="save_as_pdf"></textarea>
+                </div>
+              </div>
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
             </div>
           </div>
           <div class="row">
@@ -128,4 +157,8 @@
 
     
   </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3

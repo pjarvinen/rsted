@@ -7,7 +7,11 @@ import os, sys
 
 from flask import Flask, request, render_template, make_response, url_for, send_from_directory
 
+<<<<<<< HEAD
 from rsted.rstcompiler import RSTCompiler
+=======
+from rsted.html import rst2html as _rst2html
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
 
 from flaskext.helpers import render_html
 
@@ -40,6 +44,7 @@ def index():
     yield 'js_params', {'theme': request.args.get('theme', '')}
 
 
+<<<<<<< HEAD
 @app.route('/srv/preview/', methods=['POST', 'GET'])
 def preview():
     token = request.form.get('token', '')
@@ -75,6 +80,20 @@ def loadproject():
 @app.route('/temp/<path:filename>')
 def temp_projects(filename):
     return send_from_directory(app.root_path + '/temp/', filename, conditional=True)
+=======
+@app.route('/about/')
+def about():
+    return render_template('about.html')
+
+@app.route('/srv/rst2html/', methods=['POST', 'GET'])
+def rst2html():
+    rst = request.form.get('rst', '')
+    theme = request.form.get('theme')
+    if theme == 'basic':
+        theme = None
+    html = _rst2html(rst, theme=theme)
+    return html
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
 
 
 if __name__ == '__main__':

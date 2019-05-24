@@ -107,11 +107,14 @@ if(jQuery) (function($){
 								// Collapse
 								$(this).parent().find('UL').slideUp({ duration: o.collapseSpeed, easing: o.collapseEasing });
 								$(this).parent().removeClass('expanded').addClass('collapsed');
+<<<<<<< HEAD
 								/* Added code for Plussa GUI purposes. Call folder loading script in all cases.
 								 * In this instance no HTML code is generated since the folder is closing, so the callback
 								 * function is empty. 
 								 */
 								o.script( $(this).parent(), $(this).attr('rel'), function(p) { return; } );
+=======
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
 							}
 						} else {
 							/* Modified code for Plussa GUI purposes. */
@@ -132,4 +135,8 @@ if(jQuery) (function($){
 		}
 	});
 
+<<<<<<< HEAD
 })(jQuery);
+=======
+})(jQuery);
+>>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
