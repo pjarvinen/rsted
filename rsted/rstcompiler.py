@@ -2,7 +2,6 @@ import requests, subprocess, os, sys, shutil, random
 from zipfile import ZipFile
 from io import BytesIO
 import urllib
-import urllib.request
 import gitlab
 import base64
 
