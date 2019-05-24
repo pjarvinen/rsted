@@ -4,7 +4,6 @@ var plussaGuiFileManager = (function() {
   var userProjects = new Map(); // All user projects.
   var projectJSONs = new Map(); // Root file trees of every loaded user project.
   var folderJSONs = new Map(); // Project id keys map folder JSON maps, which in turn have folder paths as keys.
-<<<<<<< HEAD
   var fileJSONs = new Map(); // All downloaded file contents with (projectId + filepath) keys.
 
   /* Helper function for sorting files and folders. */
@@ -26,9 +25,6 @@ var plussaGuiFileManager = (function() {
       }
     }
   }
-=======
-  var fileJSONs = new Map(); // All downloaded file contents with file id (SHA value) keys.
->>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
 
   function findFileJSON(mapId) {
     var file = fileJSONs.get(mapId);
@@ -94,7 +90,6 @@ var plussaGuiFileManager = (function() {
     }
   }
 
-<<<<<<< HEAD
   function deleteMetaData(projectId, path) {
     console.log("Before: \n"+JSON.stringify(findFolderForFile(projectId, path)));
     var folderJSONarray = findFolderForFile(projectId, path);
@@ -105,24 +100,12 @@ var plussaGuiFileManager = (function() {
       if(folderJSONarray[i].path == path) {
         folderJSONarray.splice(i, 1);
         var lastIndexOfSlash = path.lastIndexOf('/');
-=======
-  function deleteFileMetaData(projectId, filePath) {
-    console.log("Before: \n"+JSON.stringify(findFolderForFile(projectId, filePath)));
-    var folderJSONarray = findFolderForFile(projectId, filePath);
-    var i = 0;
-    var l = folderJSONarray.length;
-    for(i = 0; i < l; ++i) {
-      if(folderJSONarray[i].path == filePath) {
-        folderJSONarray.splice(i, 1);
-        var lastIndexOfSlash = filePath.lastIndexOf('/');
->>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
         if(lastIndexOfSlash == -1) {
           // Update project root folder.
           projectJSONs.set(projectId, folderJSONarray);
         }
         else {
           // Update project sub folder.
-<<<<<<< HEAD
           var folderPath = path.substring(0, lastIndexOfSlash);
           if(folderJSONarray.length == 0) {
             // Remove empty metadata folder.
@@ -135,19 +118,12 @@ var plussaGuiFileManager = (function() {
           }
         }
         console.log("After: \n"+JSON.stringify(findFolderForFile(projectId, path)));
-=======
-          var folderPath = filePath.substring(0, lastIndexOfSlash);
-          (folderJSONs.get(projectId)).set(folderPath, folderJSONarray);
-        }
-        console.log("After: \n"+JSON.stringify(findFolderForFile(projectId, filePath)));
->>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
         return true;
       }
     }
     return false;
   }
 
-<<<<<<< HEAD
   function saveNewMetaData(projectId, filePath) {
     var newFileMetaJSON = {
       id: 0,
@@ -200,8 +176,6 @@ var plussaGuiFileManager = (function() {
     }
   }
 
-=======
->>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
   // Save user's GitLab projects as a map with project id keys
   var setUserProjects = function(projectsMetaJSON) {
     for(i in projectsMetaJSON) {
@@ -258,31 +232,6 @@ var plussaGuiFileManager = (function() {
     }
   }
 
-<<<<<<< HEAD
-=======
-  function addNewFileMetaData(projectId, filePath) {
-    var newMetaJSON = {
-      id: 0,
-      name: "",
-      type: "blob",
-      path: filePath,
-      mode: "100644"
-    }
-    var pathInfo = plussaGuiFileManager.explodeFilePath(filePath);
-    /* If the file has no folder path it resides in the project root folder. */
-    if(!pathInfo) {
-      newMetaJSON.name = filePath;
-      (projectJSONs.get(projectId)).push(newMetaJSON); // Add new file meta data JSON to the project root folder.
-      //folder.push(newMetaJSON);
-      //projectJSONs.set(projectId, folder);
-    }
-    else {
-      newMetaJSON.name = pathInfo[1];
-      (findFolder(projectId, pathInfo[0])).push(newMetaJSON);
-    }
-  }
-
->>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
   var saveFileJSON = function(mapId, fileJSON) {
     fileJSONs.set(mapId, fileJSON);
   }
@@ -317,11 +266,7 @@ var plussaGuiFileManager = (function() {
 
   var updateAfterFileDelete = function(projectId, filePath) {
     fileJSONs.delete(projectId + filePath); // Remove file content from File Manager.
-<<<<<<< HEAD
      return deleteMetaData(projectId, filePath);
-=======
-    deleteFileMetaData(projectId, filePath);
->>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
   }
 
   var updateAfterFileSave = function(projectId, filePath, newContent) {
@@ -332,7 +277,6 @@ var plussaGuiFileManager = (function() {
     }
     else {
       saveNewFileJSON(mapId, newContent);
-<<<<<<< HEAD
       saveNewMetaData(projectId, filePath);
     }
   }
@@ -344,13 +288,6 @@ var plussaGuiFileManager = (function() {
     if(filePath.length == 0) {
       return false;
     }
-=======
-      addNewFileMetaData(projectId, filePath);
-    }
-  }
-
-  var explodeFilePath = function(filePath) {
->>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
     var lastIndexOfSlash = filePath.lastIndexOf('/');
     if(lastIndexOfSlash != -1) {
       return [filePath.substring(0, lastIndexOfSlash), filePath.substring(lastIndexOfSlash+1, filePath.length)];
@@ -375,8 +312,4 @@ var plussaGuiFileManager = (function() {
       isFileLoaded: isFileLoaded,
       explodeFilePath: explodeFilePath
   };
-<<<<<<< HEAD
 })();
-=======
-})();
->>>>>>> da2ca956f2d7a3836fed2355aa7204c7ef154cf3
