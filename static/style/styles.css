@@ -114,7 +114,7 @@
   }
 
   html {
-    font-size: 10px;
+    font-size: 12px;
   }
   html {
     font-family: sans-serif;
@@ -138,6 +138,7 @@
   #editor {
     width: 100%;
   }
+  
 /* Loading animation */
 #loader {
   color: official;

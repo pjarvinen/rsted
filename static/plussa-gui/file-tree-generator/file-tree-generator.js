@@ -55,11 +55,17 @@ var plussaGuiFileTreeGenerator = (function() {
 
   var induceFolderOpenClick = function(projectId, folderPath) {
     var node = $("#aPlus-"+projectId).find('a[rel="'+folderPath+'"]').parent();
-    if(!node.hasClass("collapsed")) {
-      node.addClass("collapsed").children("a").click();
+    if(node) {
+      if(!node.hasClass("collapsed")) {
+        node.addClass("collapsed").children("a").click();
+      }
+      else {
+        node.children("a").click();
+      }
+      return true;
     }
     else {
-      node.children("a").click();
+      return false;
     }
   }
 
