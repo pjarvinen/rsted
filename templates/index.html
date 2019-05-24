@@ -32,9 +32,13 @@
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/file-tree-generator/file-tree-generator.js"></script>
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/gitlab-rest/gitlab-rest.js"></script>
     <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/plussa-gui-setup.js"></script>
+    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/html-preview/preview.js"></script>
   </head>
   <body>
-    <!-- Header container-->
+  <script type="text/javascript">
+      var script_root = {{ request.script_root|tojson|safe }};
+  </script>    
+  <!-- Header container-->
     <div class="container-fluid" id="topContainer">
       <div class="row">
         <div class="col-12">
@@ -46,58 +50,81 @@
       </div>
     </div>
     <!-- Credentials container -->
-    <div class="container-fluid">
-      <div class="row">
-          <div class="col-12" id="download">
+    <div class="container-fluid p-0" id="bar">
+      <div class="row no-gutters">
+          <div class="col-8 pl-4" id="download">
             <form>
               <input type="text" id="userId" placeholder="User Id" />
               <input type="text" id="privateToken" placeholder="Private Token" />
               <button type="button" class="btn btn-primary" id="plussaGuiLoadProjectsBtn">Load Projects</button>
             </form>
           </div>
+          <div class="col"><!-- Tabs -->
+            <ul class="nav nav-pills nav-justified" id="tabs" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="editor" aria-selected="true">Editor</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#log" role="tab" aria-controls="log" aria-selected="false">Log</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="contact-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="false">Info</a>
+              </li>
+            </ul></div>
         </div>
       </div>
-    <!-- Two columns container -->
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-3 bluebg">
-          <div id="fileTree"></div>
-        </div>
-        <div class="col-9" id="editor">
+    </div>
+    
+    <div class="tab-content" id="tabContent">
+      <div class="tab-pane fade show active" id="edit" role="tabpanel" aria-labelledby="editor-tab">
+      <!-- Two columns container -->
+        <div class="container-fluid">
           <div class="row">
-            <div class="col mt-2" id="buttons">
-              <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
-              <button type="button" id="plussaGuiNewFileBtn" class="btn btn-primary">New File</button>
-              <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
-              <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn">HTML Preview</button>
-              <div class="collapse" id="plussaGuiNewFilePanel" style="font-size:14px;">
-                <div style="padding:15px;">
-                  <span style="font-weight:bold;">New File: </span><span id="plussaGuiTargetProject" style="text-decoration:underline;"></span>
-                  <span id="plussaGuiNewFilePath" style="display: inline;"></span>&nbsp;&sol;&nbsp;
-                  <input type="text" id="plussaGuiPathInput" style="display: inline;width:200px;" />
-                  <button title="Add new folder to the path" type="button" id="plussaGuiAddFolderBtn"><img src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/images/folder-add-icon.png" class="img-fluid" alt="Responsive image"></button>
-                  <button type="button" class="btn btn-primary" id="plussaGuiSaveNewFileBtn">Save</button>
-                  <button id="plussaGuiCancelBtn" type="button" class="btn btn-primary" data-toggle="collapse" data-target="#plussaGuiNewFilePanel">Cancel</button>
+            <div class="col-3 bluebg">
+              <div id="fileTree"></div>
+            </div>
+            <div class="col-9" id="editor">
+              <div class="row">
+                <div class="col mt-2" id="buttons">
+                    <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
+                    <button type="button" id="plussaGuiNewFileBtn" class="btn btn-primary">New File</button>
+                    <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
+                    <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn">HTML Preview</button>
+                    <div class="loader" id="preview_loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                    <div class="collapse" id="plussaGuiNewFilePanel" style="font-size:14px;">
+                      <div style="padding:15px;">
+                        <span style="font-weight:bold;">New File: </span><span id="plussaGuiTargetProject" style="text-decoration:underline;"></span>
+                        <span id="plussaGuiNewFilePath" style="display: inline;"></span>&nbsp;&sol;&nbsp;
+                        <input type="text" id="plussaGuiPathInput" style="display: inline;width:200px;" />
+                        <button title="Add new folder to the path" type="button" id="plussaGuiAddFolderBtn"><img src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/images/folder-add-icon.png" class="img-fluid" alt="Responsive image"></button>
+                        <button type="button" class="btn btn-primary" id="plussaGuiSaveNewFileBtn">Save</button>
+                        <button id="plussaGuiCancelBtn" type="button" class="btn btn-primary" data-toggle="collapse" data-target="#plussaGuiNewFilePanel">Cancel</button>
+                      </div>
+                    </div>
                 </div>
               </div>
+              <div class="row">
+                <div class="col">
+                    <div id="plussaGuiBreadCrumb" style="font-size:14px;margin-top:5px;">
+                      <span style="font-weight:bold;">File: </span><span id="plussaGuiProjectName" style="text-decoration:underline;"></span>&nbsp;
+                      <span id="plussaGuiFilePath"></span>
+                    </div>
+                  <textarea id="markItUp" rows="15" name="rst" form="preview_html">{ rst }</textarea>
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary btn-right" id="plussaGuiPublishBtn">Publish</button>
+              <div class="loader" id="publish_loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
             </div>
           </div>
           <div class="row">
-            <div class="col">
-              <div id="plussaGuiBreadCrumb" style="font-size:14px;margin-top:5px;">
-                <span style="font-weight:bold;">File: </span><span id="plussaGuiProjectName" style="text-decoration:underline;"></span>&nbsp;
-                <span id="plussaGuiFilePath"></span>
-              </div>
-              <textarea id="markItUp" rows="15" name="rst" form="save_as_pdf"></textarea>
+            <div class="col container-fluid">
+            <!--iframe id="browse"></iframe-->
             </div>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col container-fluid">
-          <!--iframe id="browse"></iframe-->
-        </div>
-      </div>
+      <div class="tab-pane fade" id="log" role="tabpanel" aria-labelledby="log-tab"><div class="col container-fluid"><p>Tähän historia logia</p></div></div>
+      <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab"><div class="col container-fluid"><p>Tässä ohjeet kuinka lisätään kursseja</p></div></div>
     </div>
   </body>
 </html>

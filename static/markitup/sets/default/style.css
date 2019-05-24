@@ -6,62 +6,121 @@
 
 .markItUp .markItUpButton1 a {
 	background-image:url(images/h1.png);
+	padding: 12px;
+	background-position: center;
+	background-size: 70%; 
 }
 .markItUp .markItUpButton2 a {
 	background-image:url(images/h2.png);
+	padding: 12px;
+	background-position: center;
+	background-size: 70%;
 }
 .markItUp .markItUpButton3 a {
 	background-image:url(images/h3.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 70%;
 }
 .markItUp .markItUpButton4 a {
 	background-image:url(images/h4.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 70%;
 }
 .markItUp .markItUpButton5 a {
 	background-image:url(images/h5.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 70%;
 }
 .markItUp .markItUpButton6 a {
 	background-image:url(images/h6.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 70%;
+}
+.markItUp .markItUpButton7 a {
+	background-image:url(images/h7.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 70%;
 }
 
 .markItUp .buttonBold a {
 	background-image:url(images/bold.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 70%;
 }
 .markItUp .buttonItalic a {
 	background-image:url(images/italic.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 70%;
 }
 .markItUp .buttonMonospace a {
 	background-image:url(images/text_monospace.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 70%;
 }
 
 .markItUp .buttonIndent a {
 	background-image:url(images/text_indent.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 75%;
 }
 
 .markItUp .buttonRemoveIndent a {
 	background-image:url(images/text_indent_remove.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 75%;
 }
 
 .markItUp .buttonBulletedList a {
 	background-image:url(images/list-bullet.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 80%;
 }
 .markItUp .buttonNumericList a {
 	background-image:url(images/list-numeric.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 80%;
 }
 
 .markItUp .buttonPicture a {
 	background-image:url(images/picture.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 80%;
 }
 .markItUp .buttonLink a {
 	background-image:url(images/link.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 80%;
 }
 
 .markItUp .markItUpButton13 a	{
-	background-image:url(images/quotes.png);
+	background-image:url(images/bulletlist.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 80%;
 }
 .markItUp .markItUpButton14 a	{
-	background-image:url(images/code.png);
+	background-image:url(images/numericlist.png);
+	padding: 12px;
+	  background-position: center;
+	  background-size: 80%;
 }
 
 .markItUp .preview a {
 	background-image:url(images/preview.png);
+	padding: 12px;
+  	background-position: center;
 }
