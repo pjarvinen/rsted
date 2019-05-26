@@ -1,0 +1,27 @@
+{
+  "name": "plussa-gui",
+  "version": "1.0.0",
+  "description": "Tampere University student group work. Browser GUI for A-plus LMS.",
+  "main": "templates/index.html",
+  "dependencies": {},
+  "devDependencies": {
+    "cypress": "3.3.1"
+  },
+  "scripts": {
+    "test": "cypress open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pjarvinen/rsted.git"
+  },
+  "keywords": [
+    "A-plus",
+    "GitLab"
+  ],
+  "author": "P. Järvinen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pjarvinen/rsted/issues"
+  },
+  "homepage": "https://github.com/pjarvinen/rsted#readme"
+}

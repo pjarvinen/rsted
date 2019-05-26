@@ -9,3 +9,5 @@
 /run.sh
 /env
 /temp/*
+/node_modules
+/cypress/integration/examples
