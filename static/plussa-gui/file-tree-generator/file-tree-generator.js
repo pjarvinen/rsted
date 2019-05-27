@@ -94,7 +94,7 @@ var plussaGuiFileTreeGenerator = (function() {
       induceProjectOpenClick(projectId);
     }
     else {
-      induceFolderOpenClick(parentData[0]);
+      induceFolderOpenClick(projectId, parentData[0]);
     }
   }
 

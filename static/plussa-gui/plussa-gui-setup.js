@@ -260,7 +260,9 @@ $(document).ready(function(){
 		var path = removeSpaces($("#plussaGuiNewFilePath").text());
 		console.log("Path after spaces removal: "+path);
 		var newContent = $("#markItUp").val();
-		// TODO: Validate input data.
+		if(newContent.length == 0) {
+			
+		}
 		if(path.length > 0) {
 			// Concatenate file path and filename.
 			path += "/" + $("#plussaGuiPathInput").val();
