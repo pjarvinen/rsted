@@ -23,7 +23,7 @@ var plussaGuiGitlabRest = (function() {
       // The type of data we expect back
       dataType: "json",
       crossDomain: true,
-      contentType: "application/json; charset=UTF-8",
+      contentType: "application/json;charset=utf-8",
       processData: false,
       // Additional header key-value pairs
       headers: {

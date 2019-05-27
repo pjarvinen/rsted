@@ -8,6 +8,7 @@
 /var/run
 /run.sh
 /env
-
+/node_modules
+/cypress/integration/examples
 /temp/*
 !/temp/.gitkeep
