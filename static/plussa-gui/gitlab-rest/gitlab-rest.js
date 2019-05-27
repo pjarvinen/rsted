@@ -16,6 +16,7 @@ var plussaGuiGitlabRest = (function() {
     $.ajax({
       // The URL for the request
       url: url,
+      encoding: "UTF-8",
       // The data to send (will be converted to a query string)
       data: JSON.stringify(data),
       // Whether this is a POST or GET request
@@ -34,11 +35,12 @@ var plussaGuiGitlabRest = (function() {
       // The response is passed to the callback function
       .done(function( json ) {
          success(json);
+         console.log(JSON.stringify(json));
       })
       // Code to run if the request fails.
       // Status codes and error data are passed to the callback function
       .fail(function( xhr, status, errorThrown ) {
-        plussaGuiGitlabRest.errorCallback(status, errorThrown);
+        plussaGuiGitlabRest.errorCallback("HTTP error "+status+": "+errorThrown);
       });
   }
 

@@ -16,23 +16,23 @@
     <link rel="stylesheet" href="{{ request.script_root }}{{ MEDIA_URL }}markitup/sets/default/style.css" />
 
     <!-- jQuery -->
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}jquery/jquery-3.4.0.min.js"></script>
+    <script src="{{ request.script_root }}{{ MEDIA_URL }}jquery/jquery-3.4.0.min.js"></script>
     <!-- Bootstrap -->
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ request.script_root }}{{ MEDIA_URL }}bootstrap/js/bootstrap.min.js"></script>
 
     <!-- File Tree javascript -->
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}filetree/js/jquery.easing.js"></script>
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}filetree/js/jqueryFileTree.js"></script>
+    <script src="{{ request.script_root }}{{ MEDIA_URL }}filetree/js/jquery.easing.js"></script>
+    <script src="{{ request.script_root }}{{ MEDIA_URL }}filetree/js/jqueryFileTree.js"></script>
     <!-- markItUp! -->
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}markitup/jquery.markitup.js"></script>
+    <script src="{{ request.script_root }}{{ MEDIA_URL }}markitup/jquery.markitup.js"></script>
     <!-- markItUp! toolbar settings -->
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}markitup/sets/default/set.js"></script>
+    <script src="{{ request.script_root }}{{ MEDIA_URL }}markitup/sets/default/set.js"></script>
     <!-- Plussa GUI modules and setup script -->
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/file-manager/file-manager.js"></script>
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/file-tree-generator/file-tree-generator.js"></script>
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/gitlab-rest/gitlab-rest.js"></script>
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/plussa-gui-setup.js"></script>
-    <script type="text/javascript" src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/html-preview/preview.js"></script>
+    <script src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/file-manager/file-manager.js"></script>
+    <script src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/file-tree-generator/file-tree-generator.js"></script>
+    <script src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/gitlab-rest/gitlab-rest.js"></script>
+    <script src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/plussa-gui-setup.js"></script>
+    <script src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/html-preview/preview.js"></script>
   </head>
   <body>
   <script type="text/javascript">
@@ -46,7 +46,7 @@
             <h1 class="page-header">A-plus LMS course editor</h1>
           </div>
         </div>
-        <div id="plussaGuiReport" style="display:none;font-size:14px;width:200px;height:100px;background-color:white;border:1px solid gray;padding:14px;position:fixed;z-index:1000;border-radius:10px;"></div>
+        <div id="plussaGuiReport"></div>
       </div>
     </div>
     <!-- Credentials container -->
@@ -86,10 +86,10 @@
             <div class="col-9" id="editor">
               <div class="row">
                 <div class="col mt-2" id="buttons">
-                    <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn">Save File</button>
-                    <button type="button" id="plussaGuiNewFileBtn" class="btn btn-primary">New File</button>
-                    <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn">Delete File</button>
-                    <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn">HTML Preview</button>
+                    <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn" disabled>Save File</button>
+                    <button type="button" class="btn btn-primary" id="plussaGuiNewFileBtn" disabled>New File</button>
+                    <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn" disabled>Delete File</button>
+                    <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn" disabled>HTML Preview</button>
                     <div class="loader" id="preview_loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                     <div class="collapse" id="plussaGuiNewFilePanel" style="font-size:14px;">
                       <div style="padding:15px;">
@@ -112,13 +112,8 @@
                   <textarea id="markItUp" rows="15" name="rst" form="preview_html">{ rst }</textarea>
                 </div>
               </div>
-              <button type="button" class="btn btn-primary btn-right" id="plussaGuiPublishBtn">Publish</button>
+              <button type="button" class="btn btn-primary btn-right" id="plussaGuiPublishBtn" disabled>Publish</button>
               <div class="loader" id="publish_loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col container-fluid">
-            <!--iframe id="browse"></iframe-->
             </div>
           </div>
         </div>

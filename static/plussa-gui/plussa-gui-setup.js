@@ -4,25 +4,25 @@ var plussaGuiSettings = {
 	activeProjectMeta: false,
 	activeFileMeta: false,
 	activeFolder: false,
-	errorCallback: function(status, errorThrown) {
+	errorCallback: function(message) {
 		var elem = $('#plussaGuiReport');
+		elem.addClass("plussaGuiError");
 		var left = $(window).width() - elem.width() - 50;
 		var top = 20;
 		elem.css({"left":left, "top":top});
-		elem.addClass("plussaGuiError");
-		elem.text("Error: "+status);
+		elem.html("<b>Error:</b><p>"+message+"</p>");
 		elem.fadeIn(500, function() {
 			setTimeout(function(){
 				elem.fadeOut(2000, function() {
 					elem.text("");
-					elem.removeClass("plussaGuiError");
 				});
 			}, 3000);
 		});
-		console.log("ERROR!\n"+JSON.stringify(errorThrown));
+		console.log("ERROR!\n"+JSON.stringify(message));
 	},
 	successCallback: function(message) {
 		var elem = $('#plussaGuiReport');
+		elem.removeClass("plussaGuiError");
 		var left = $(window).width() - elem.width() - 50;
 		var top = 20;
 		elem.css({"left":left, "top":top});
@@ -135,6 +135,14 @@ $(document).ready(function(){
 		if($(node).attr('id')) {
 			isProjectRoot = true;
 			projectId = $(node).attr('id').split('-')[1];
+			// Enable file operation buttons
+			if($("#plussaGuiSaveFileBtn").attr("disabled")) {
+				$("#plussaGuiSaveFileBtn").removeAttr("disabled");
+				$("#plussaGuiNewFileBtn").removeAttr("disabled");
+				$("#plussaGuiDeleteFileBtn").removeAttr("disabled");
+				$("#plussaGuiPreviewBtn").removeAttr("disabled");
+				$("#plussaGuiPublishBtn").removeAttr("disabled");
+			}
 		}
 		else {
 			// If not a project root folder click, get the id from a helper function.
@@ -205,7 +213,7 @@ $(document).ready(function(){
 			console.log("Active fileMeta: " + JSON.stringify(fileMeta));
 		}
 		else {
-			plussaGuiSettings.errorCallback(500, "File meta data was not found.");
+			plussaGuiSettings.errorCallback("File meta data was not found.");
 		}
 		$("#plussaGuiProjectName").text(plussaGuiSettings.activeProjectMeta.name + ": ");
 	}
@@ -214,7 +222,13 @@ $(document).ready(function(){
 		var userId = $('#userId').val();
 		var privateToken = $('#privateToken').val();
 		if(!userId || !privateToken) {
-			plussaGuiSettings.errorCallback(400, "Error!");
+			plussaGuiSettings.errorCallback("Please, give your user credentials.");
+			if(!userId) {
+				$('#userId').focus();
+			}
+			else {
+				$('#privateToken').focus();
+			}
 		}
 		else {
 			// Construct a folder list presentation of the user's GitLab projects

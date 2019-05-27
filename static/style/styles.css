@@ -2,6 +2,24 @@
   width: 100%;
 }
 
+#plussaGuiReport {
+  display:none;
+  font-size:14px;
+  width:200px;
+  height:100px;
+  background-color:white;
+  border:1px solid gray;
+  padding:14px;
+  position:fixed;
+  z-index:1000;
+  border-radius:10px;
+}
+
+.plussaGuiError {
+  color: red;
+  border-color: red;
+}
+
 /* iFrame for HTML preview */
 #browse {
 	border: 1px solid #CCC;
@@ -138,7 +156,7 @@
   #editor {
     width: 100%;
   }
-  
+
 /* Loading animation */
 .loader {
   color: official;
