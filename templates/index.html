@@ -37,7 +37,7 @@
   <body>
   <script type="text/javascript">
       var script_root = {{ request.script_root|tojson|safe }};
-  </script>    
+  </script>
   <!-- Header container-->
     <div class="container-fluid" id="topContainer">
       <div class="row">
@@ -46,7 +46,7 @@
             <h1 class="page-header">A-plus LMS course editor</h1>
           </div>
         </div>
-        <div class="" id="plussaGuiReport"></div>
+        <div id="plussaGuiReport" style="display:none;font-size:14px;width:200px;height:100px;background-color:white;border:1px solid gray;padding:14px;position:fixed;z-index:1000;border-radius:10px;"></div>
       </div>
     </div>
     <!-- Credentials container -->
@@ -74,7 +74,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="tab-content" id="tabContent">
       <div class="tab-pane fade show active" id="edit" role="tabpanel" aria-labelledby="editor-tab">
       <!-- Two columns container -->
@@ -123,10 +123,10 @@
           </div>
         </div>
       </div>
-      <div class="tab-pane fade" id="log" role="tabpanel" aria-labelledby="log-tab"><div class="col container-fluid""><p>Tähän historia logia</p></div></div>
-      <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab"><div class="col container-fluid""><p>Tässä ohjeet kuinka lisätään kursseja</p></div></div>
+      <div class="tab-pane fade" id="log" role="tabpanel" aria-labelledby="log-tab"><div class="col container-fluid"><p>Listing of commit history</p></div></div>
+      <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab"><div class="col container-fluid"><p>Course building instructions</p></div></div>
     </div>
 
-    
+
   </body>
 </html>
