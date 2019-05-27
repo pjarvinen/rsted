@@ -124,6 +124,14 @@ var plussaGuiFileManager = (function() {
     return false;
   }
 
+  var saveFolderJSON = function(projectId, path, content) {;
+    if(!folderJSONs.has(projectId)) {
+      // No previous sub folders loaded for this project id, make a new entry.
+      folderJSONs.set(projectId, new Map());
+    }
+    (folderJSONs.get(projectId)).set(path, content);
+  }
+
   function saveNewMetaData(projectId, filePath) {
     var newFileMetaJSON = {
       id: 0,
@@ -166,7 +174,15 @@ var plussaGuiFileManager = (function() {
           ((folderJSONs.get(projectId)).get(folderInfo[0])).sort(compareItems);
         }
         // Create a new array of file metadata JSON items with a new folder path as map key
-        (folderJSONs.get(projectId)).set(pathInfo[0], [newFileMetaJSON]);
+        if(folderJSONs.has(projectId)) {
+          (folderJSONs.get(projectId)).set(pathInfo[0], [newFileMetaJSON]);
+        }
+        else {
+          /* No project subfolders have been downloaded yet. Create new folderJSONs
+           * entry for the project.
+           */
+           saveFolderJSON(projectId, pathInfo[0], [newFileMetaJSON]);
+        }
       }
       else {
         // Add file metadata to existing metadata array
@@ -200,14 +216,6 @@ var plussaGuiFileManager = (function() {
       }
     }
     return false;
-  }
-
-  var saveFolderJSON = function(projectId, path, content) {;
-    if(!folderJSONs.has(projectId)) {
-      // No previous sub folders loaded for this project id, make a new entry
-      folderJSONs.set(projectId, new Map());
-    }
-    (folderJSONs.get(projectId)).set(path, content);
   }
 
   var isProjectLoaded = function(projectId) {
