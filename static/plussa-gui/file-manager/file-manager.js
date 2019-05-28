@@ -26,8 +26,8 @@ var plussaGuiFileManager = (function() {
     }
   }
 
-  function findFileJSON(mapId) {
-    var file = fileJSONs.get(mapId);
+  function findFileJSON(key) {
+    var file = fileJSONs.get(key);
     if(file != undefined) {
       return file;
     }
@@ -240,30 +240,31 @@ var plussaGuiFileManager = (function() {
     }
   }
 
-  var saveFileJSON = function(mapId, fileJSON) {
-    fileJSONs.set(mapId, fileJSON);
+  var saveFileJSON = function(projectId, path, fileJSON) {
+    var key = projectId + path;
+    fileJSONs.set(key, fileJSON);
   }
 
-  function saveNewFileJSON(mapId, newContent) {
+  function saveNewFileJSON(key, newContent) {
     var fileJSON = {
       size: newContent.length,
       encoding: "base64",
       content: btoa(newContent),
       sha:0
     }
-    fileJSONs.set(mapId, fileJSON);
+    fileJSONs.set(key, fileJSON);
   }
 
-  function updateFileJSON(mapId, newContent) {
-    var file = fileJSONs.get(mapId);
+  function updateFileJSON(key, newContent) {
+    var file = fileJSONs.get(key);
     file.size = newContent.length;
     file.content = btoa(newContent);
     file.sha = 0;
-    fileJSONs.set(mapId, file);
+    fileJSONs.set(key, file);
   }
 
-  var isFileLoaded = function(mapId) {
-    var result = findFileJSON(mapId);
+  var isFileLoaded = function(projectId, path) {
+    var result = findFileJSON(projectId + path);
     if(result) {
       return result.content;
     }
@@ -273,18 +274,19 @@ var plussaGuiFileManager = (function() {
   }
 
   var updateAfterFileDelete = function(projectId, filePath) {
-    fileJSONs.delete(projectId + filePath); // Remove file content from File Manager.
+    var key = projectId + filePath;
+    fileJSONs.delete(key); // Remove file content from File Manager.
      return deleteMetaData(projectId, filePath);
   }
 
   var updateAfterFileSave = function(projectId, filePath, newContent) {
-    var mapId = projectId + filePath;
+    var key = projectId + filePath;
     // Update file content if the file path for the project exists.
-    if(fileJSONs.has(mapId)) {
-      updateFileJSON(mapId, newContent);
+    if(fileJSONs.has(key)) {
+      updateFileJSON(key, newContent);
     }
     else {
-      saveNewFileJSON(mapId, newContent);
+      saveNewFileJSON(key, newContent);
       saveNewMetaData(projectId, filePath);
     }
   }

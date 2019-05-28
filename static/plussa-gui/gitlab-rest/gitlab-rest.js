@@ -1,4 +1,4 @@
-
+'use strict';
 var plussaGuiGitlabRest = (function() {
 
   var init = function(settings) {
@@ -35,7 +35,6 @@ var plussaGuiGitlabRest = (function() {
       // The response is passed to the callback function
       .done(function( json ) {
          success(json);
-         console.log(JSON.stringify(json));
       })
       // Code to run if the request fails.
       // Status codes and error data are passed to the callback function

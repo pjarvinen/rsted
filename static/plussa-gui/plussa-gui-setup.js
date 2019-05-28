@@ -43,6 +43,9 @@ $(document).ready(function(){
 		baseUrl: plussaGuiSettings.baseRestUrl,
     errorCallback: plussaGuiSettings.errorCallback
 	});
+	// Disable all file operation buttons at start up
+	$(".plussaGuiFO").attr('disabled', 'disabled');
+
 	/* The line below constructs a File Tree structure at startup for GUI design. Remove comment slashes when necessary. */
 	//$('#fileTree').fileTree({ treeStructure: plussaGuiFileTreeGenerator.fileTreeForTesting(), script: fileTreeScript }, function(linkNode) { });
 	$("#markItUp").val("");
@@ -137,11 +140,7 @@ $(document).ready(function(){
 			projectId = $(node).attr('id').split('-')[1];
 			// Enable file operation buttons
 			if($("#plussaGuiSaveFileBtn").attr("disabled")) {
-				$("#plussaGuiSaveFileBtn").removeAttr("disabled");
-				$("#plussaGuiNewFileBtn").removeAttr("disabled");
-				$("#plussaGuiDeleteFileBtn").removeAttr("disabled");
-				$("#plussaGuiPreviewBtn").removeAttr("disabled");
-				$("#plussaGuiPublishBtn").removeAttr("disabled");
+				$(".plussaGuiFO").removeAttr("disabled");
 			}
 		}
 		else {
@@ -195,7 +194,7 @@ $(document).ready(function(){
 		console.log("file path: "+filePath+"\nproject id: "+projectId);
 		var fileMeta = plussaGuiFileManager.getFileMetaData(projectId, filePath);
 		if(fileMeta) {
-			var content = plussaGuiFileManager.isFileLoaded(projectId + fileMeta.path);
+			var content = plussaGuiFileManager.isFileLoaded(projectId, fileMeta.path);
 			/* If file is already loaded, get the contents. */
 			if(content) {
 				$('#markItUp').val(atob(content));
@@ -203,7 +202,7 @@ $(document).ready(function(){
 			}
 			else {
 				plussaGuiGitlabRest.loadFile(projectId, fileMeta.path, plussaGuiSettings.activeProjectMeta.default_branch, function(result) {
-					plussaGuiFileManager.saveFileJSON(projectId + fileMeta.path, result);
+					plussaGuiFileManager.saveFileJSON(projectId, fileMeta.path, result);
 					$('#markItUp').val(atob(result.content));
 					console.log("Loaded "+filePath+" from REST API.");
 				});
@@ -252,7 +251,6 @@ $(document).ready(function(){
 		if(!plussaGuiSettings.activeFileMeta) {
 			// About to save a new file, so open new file panel.
 			if(!$("#plussaGuiNewFilePanel").hasClass("collapse.show")) {
-				// Open new file panel
 				$("#plussaGuiCancelBtn").click(); // Toggle button for showing/hiding the new file panel
 			}
 		}
@@ -334,16 +332,34 @@ $(document).ready(function(){
 	$("#plussaGuiDeleteFileBtn").click(function() {
 		var projectMeta = plussaGuiSettings.activeProjectMeta;
 		var branch = projectMeta.default_branch;
+		if(!plussaGuiSettings.activeFileMeta) {
+			plussaGuiSettings.errorCallback("No file to be deleted.");
+			return;
+		}
 		var path = removeSpaces($("#plussaGuiFilePath").text());
-		plussaGuiGitlabRest.deleteFile(projectMeta.id, branch, path, function(result) {
-			plussaGuiFileManager.updateAfterFileDelete(projectMeta.id, path);
-			$("#markItUp").val("");
-			plussaGuiSettings.successCallback("Deleted " + path + " from " + projectMeta.name);
-			$("#plussaGuiFilePath").text("");
-			$("#plussaGuiProjectName").text("");
-			plussaGuiSettings.activeFileMeta = false;
-			updateFileTree(projectMeta.id, path);
-			console.log("Deleted file: "+ path);
+		if(!plussaGuiFileManager.isFileLoaded(projectMeta.id, path)) {
+			plussaGuiSettings.errorCallback("File path was not recognized.");
+			return;
+		}
+		$('#modalLabel').text('Deleting '+projectMeta.name+': '+path);
+		$('#plussaGuiConfirmModal').modal();
+		$("#plussaGuiConfirmOk").click(function() {
+			$("#plussaGuiConfirmCancel").off('click');
+			$('#plussaGuiConfirmModal').modal('hide');
+			plussaGuiGitlabRest.deleteFile(projectMeta.id, branch, path, function(result) {
+				plussaGuiFileManager.updateAfterFileDelete(projectMeta.id, path);
+				$("#markItUp").val("");
+				plussaGuiSettings.successCallback("Deleted " + path + " from " + projectMeta.name);
+				$("#plussaGuiFilePath").text("");
+				$("#plussaGuiProjectName").text("");
+				plussaGuiSettings.activeFileMeta = false;
+				updateFileTree(projectMeta.id, path);
+				console.log("Deleted file: "+ path);
+			});
+		});
+		$("#plussaGuiConfirmCancel").click(function() {
+			plussaGuiSettings.successCallback("Delete operation canceled.");
+			$("#plussaGuiConfirmOk").off('click');
 		});
 	});
 

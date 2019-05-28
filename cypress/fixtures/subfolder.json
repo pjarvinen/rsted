@@ -1,0 +1,3 @@
+[{"id":"890b7693a4b213b035d246b62396f1199935ad0f","name":"subfolder","type":"tree","path":"folder1/subfolder","mode":"040000"},
+{"id":"01a27cfb2f63da63c319647ac498c8d389c5d96f","name":"testi.txt","type":"blob","path":"folder1/testi.txt","mode":"100644"},
+{"id":"b68a3ad06dca71227b87890830367ea3d147f3de","name":"testi2.txt","type":"blob","path":"folder1/testi2.txt","mode":"100644"}]

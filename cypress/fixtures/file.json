@@ -1,0 +1,8 @@
+{"file_name":"testi.txt",
+  "file_path":"folder1/testi.txt",
+  "size":17,"encoding":"base64",
+  "content_sha256":"a195cf31dc7accda048977b545b7a6709f101b900b1e3afd0a9340e81d9313fa",
+  "ref":"master","blob_id":"01a27cfb2f63da63c319647ac498c8d389c5d96f",
+  "commit_id":"0b70e110b5fc7a1447d3029324c2d61fbab5fa4a",
+  "last_commit_id":"f34779800e03ad4833368e51084d1aec685ee6a3",
+  "content":"am90YWluIHRla3N0aS4uLg=="}

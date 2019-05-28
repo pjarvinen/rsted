@@ -1,0 +1,4 @@
+[{"id":"5efe02319ed699783316827b8c8de20d68fe2d8d","name":"folder1","type":"tree","path":"folder1","mode":"040000"},
+{"id":"2575cc4b685a3ee88fc7102d9a333575bc887eed","name":"uusi","type":"tree","path":"uusi","mode":"040000"},
+{"id":"bdacbae9820020bbac67e826a61f3e6d0aa3d9ae","name":"README.md","type":"blob","path":"README.md","mode":"100644"},
+{"id":"23056406b24a227313f115e3e1755074137c6075","name":"joku.txt","type":"blob","path":"joku.txt","mode":"100644"}]

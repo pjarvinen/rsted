@@ -38,6 +38,26 @@
   <script type="text/javascript">
       var script_root = {{ request.script_root|tojson|safe }};
   </script>
+  <!-- Modal -->
+  <div class="modal fade" id="plussaGuiConfirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="modalLabel"></h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <h4 class="modal-body">
+          Is it Ok to proceed?
+        </h4>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="plussaGuiConfirmCancel">Cancel</button>
+          <button type="button" class="btn btn-primary" id="plussaGuiConfirmOk">Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- Header container-->
     <div class="container-fluid" id="topContainer">
       <div class="row">
@@ -86,10 +106,10 @@
             <div class="col-9" id="editor">
               <div class="row">
                 <div class="col mt-2" id="buttons">
-                    <button type="button" class="btn btn-primary" id="plussaGuiSaveFileBtn" disabled>Save File</button>
-                    <button type="button" class="btn btn-primary" id="plussaGuiNewFileBtn" disabled>New File</button>
-                    <button type="button" class="btn btn-primary" id="plussaGuiDeleteFileBtn" disabled>Delete File</button>
-                    <button type="button" class="btn btn-primary btn-right" id="plussaGuiPreviewBtn" disabled>HTML Preview</button>
+                    <button type="button" class="btn btn-primary plussaGuiFO" id="plussaGuiSaveFileBtn">Save File</button>
+                    <button type="button" class="btn btn-primary plussaGuiFO" id="plussaGuiNewFileBtn">New File</button>
+                    <button type="button" class="btn btn-primary plussaGuiFO" id="plussaGuiDeleteFileBtn">Delete File</button>
+                    <button type="button" class="btn btn-primary btn-right plussaGuiFO" id="plussaGuiPreviewBtn">HTML Preview</button>
                     <div class="loader" id="preview_loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                     <div class="collapse" id="plussaGuiNewFilePanel" style="font-size:14px;">
                       <div style="padding:15px;">
@@ -112,7 +132,7 @@
                   <textarea id="markItUp" rows="15" name="rst" form="preview_html">{ rst }</textarea>
                 </div>
               </div>
-              <button type="button" class="btn btn-primary btn-right" id="plussaGuiPublishBtn" disabled>Publish</button>
+              <button type="button" class="btn btn-primary btn-right plussaGuiFO" id="plussaGuiPublishBtn">Publish</button>
               <div class="loader" id="publish_loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
             </div>
           </div>
