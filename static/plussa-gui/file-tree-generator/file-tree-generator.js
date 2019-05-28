@@ -80,16 +80,7 @@ var plussaGuiFileTreeGenerator = (function() {
     }
   }
 
-  var induceFileClick = function(projectId, filePath) {
-    console.log("Searching in "+projectId+" for "+filePath);
-    var node = $("#aPlus-"+projectId).find("a[rel='"+filePath+"']");
-    if(node) {
-      console.log("jipii");
-      node.click();
-    }
-  }
-
-  var createNewFolder = function(projectId, parentData, fileData) {
+  var updateAfterFolderAddition = function(projectId, parentData, fileData) {
     if(!parentData) {
       induceProjectOpenClick(projectId);
     }
@@ -115,10 +106,8 @@ var plussaGuiFileTreeGenerator = (function() {
       getActiveProjectId: getActiveProjectId,
       induceFolderOpenClick: induceFolderOpenClick,
       induceProjectOpenClick: induceProjectOpenClick,
-      induceFileClick: induceFileClick,
-      createNewFolder: createNewFolder,
+      updateAfterFolderAddition: updateAfterFolderAddition,
       fileTreeForTesting: fileTreeForTesting,
       folderTreeForTesting: folderTreeForTesting
   };
   })();
-  

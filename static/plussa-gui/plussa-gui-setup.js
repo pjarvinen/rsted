@@ -4,6 +4,9 @@ var plussaGuiSettings = {
 	activeProjectMeta: false,
 	activeFileMeta: false,
 	activeFolder: false,
+	folderRegEx: "^[a-zA-Z0-9_]*$",
+	fileNameRegEx: "^[a-zA-Z0-9_]*$",
+	allowedFileExtensions: ['rst', 'txt', 'yaml', 'xml', 'md', 'html', 'css', 'py', 'class', 'conf'],
 	errorCallback: function(message) {
 		var elem = $('#plussaGuiReport');
 		elem.addClass("plussaGuiError");
@@ -75,9 +78,9 @@ $(document).ready(function(){
 					}
 				}
 				else {
-					// Folder node was not found in the file tree. Create one.
+					// Folder node was not found in the file tree. Needs to be refreshed.
 					var parentFolderData = plussaGuiFileManager.explodeFilePath(pathData[0]);
-					plussaGuiFileTreeGenerator.createNewFolder(projectId, parentFolderData, pathData);
+					plussaGuiFileTreeGenerator.updateAfterFolderAddition(projectId, parentFolderData, pathData);
 				}
 			}
 			else {
@@ -256,7 +259,11 @@ $(document).ready(function(){
 		}
 		else {
 			/* Do file update. */
-			console.log("Update file.");
+			if(newContent.length == 0) {
+				plussaGuiSettings.errorCallback("Empty files can not be saved.");
+				$("#markItUp").focus();
+				return;
+			}
 			plussaGuiGitlabRest.updateFile(projectMeta.id, projectMeta.default_branch, path, newContent, function(result) {
 				plussaGuiFileManager.updateAfterFileSave(projectMeta.id, path, newContent);
 				plussaGuiSettings.successCallback(successReport);
@@ -270,18 +277,47 @@ $(document).ready(function(){
 	$("#plussaGuiSaveNewFileBtn").click(function() {
 		var projectMeta = plussaGuiSettings.activeProjectMeta;
 		var path = removeSpaces($("#plussaGuiNewFilePath").text());
-		console.log("Path after spaces removal: "+path);
 		var newContent = $("#markItUp").val();
 		if(newContent.length == 0) {
-
+			plussaGuiSettings.errorCallback("File is empty.");
+			$("#markItUp").focus();
+			return;
+		}
+		var filename = $("#plussaGuiPathInput").val();
+		if(filename.length == 0) {
+			plussaGuiSettings.errorCallback("Filename is empty.");
+			$("#plussaGuiPathInput").focus();
+			return;
+		}
+		if(filename.lastIndexOf('.') == -1) {
+			plussaGuiSettings.errorCallback("Filename extension is missing.");
+			$("#plussaGuiPathInput").focus();
+			return;
+		}
+		var filenameData = filename.split('.');
+		if(filenameData.length > 2) {
+			plussaGuiSettings.errorCallback("Filename has too many extensions.");
+			$("#plussaGuiPathInput").focus();
+			return;
+		}
+		var regex = RegExp(plussaGuiSettings.fileNameRegEx);
+		if(!regex.test(filenameData[0])) {
+			plussaGuiSettings.errorCallback("Filename has to pass " + plussaGuiSettings.fileNameRegEx + " test.");
+			$("#plussaGuiPathInput").focus();
+			return;
+		}
+		if(!plussaGuiSettings.allowedFileExtensions.includes(filenameData[1].toLowerCase())) {
+			plussaGuiSettings.errorCallback("Allowed file extensions are: " + plussaGuiSettings.allowedFileExtensions);
+			$("#plussaGuiPathInput").focus();
+			return;
 		}
 		if(path.length > 0) {
 			// Concatenate file path and filename.
-			path += "/" + $("#plussaGuiPathInput").val();
+			path += "/" + filename;
 		}
 		else {
-			// No file path data, path equals filename
-			path = $("#plussaGuiPathInput").val();
+			// No file path data, path equals filename.
+			path = filename;
 		}
 		var successReport = "Saved new file " + path + " in project: " + projectMeta.name;
 		/* Save a new file. */
@@ -313,6 +349,17 @@ $(document).ready(function(){
 	$("#plussaGuiAddFolderBtn").click(function() {
 		var path = $("#plussaGuiNewFilePath").text();
 		var newFolder = $("#plussaGuiPathInput").val();
+		if(newFolder.length == 0) {
+			plussaGuiSettings.errorCallback("Folder name is empty.");
+			$("#plussaGuiPathInput").focus();
+			return;
+		}
+		var regex = RegExp(plussaGuiSettings.folderRegEx);
+		if(!regex.test(newFolder)) {
+			plussaGuiSettings.errorCallback("Folder names must pass "+plussaGuiSettings.folderRegEx+" test.");
+			$("#plussaGuiPathInput").focus();
+			return;
+		}
 		if(path.length > 0) {
 			$("#plussaGuiNewFilePath").text(path + " / " + newFolder);
 		}
@@ -337,10 +384,6 @@ $(document).ready(function(){
 			return;
 		}
 		var path = removeSpaces($("#plussaGuiFilePath").text());
-		if(!plussaGuiFileManager.isFileLoaded(projectMeta.id, path)) {
-			plussaGuiSettings.errorCallback("File path was not recognized.");
-			return;
-		}
 		$('#modalLabel').text('Deleting '+projectMeta.name+': '+path);
 		$('#plussaGuiConfirmModal').modal();
 		$("#plussaGuiConfirmOk").click(function() {
