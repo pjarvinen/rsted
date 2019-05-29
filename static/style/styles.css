@@ -15,6 +15,14 @@
   border-radius:10px;
 }
 
+#plussaGuiProjectName {
+  font-weight:bold;
+}
+
+#plussaGuiNewFilePanel {
+  font-size:14px;
+}
+
 .plussaGuiError {
   color: red;
   border-color: red;

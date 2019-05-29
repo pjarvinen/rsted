@@ -7,6 +7,7 @@ var plussaGuiSettings = {
 	folderRegEx: "^[a-zA-Z0-9_]*$",
 	fileNameRegEx: "^[a-zA-Z0-9_]*$",
 	allowedFileExtensions: ['rst', 'txt', 'yaml', 'xml', 'md', 'html', 'css', 'py', 'class', 'conf'],
+	checkFileExtension: false,
 	errorCallback: function(message) {
 		var elem = $('#plussaGuiReport');
 		elem.addClass("plussaGuiError");
@@ -54,6 +55,20 @@ $(document).ready(function(){
 	$("#markItUp").val("");
   // Setup markItUp! a javascript text editor
 	$('#markItUp').markItUp(markItUpSettings);
+
+	var showConfirmModal = function(labelText, operationName, action) {
+		$('#plussaGuiConfirmModal').modal();
+		$('#modalLabel').text(labelText);
+		$("#plussaGuiConfirmOk").click(function() {
+			$("#plussaGuiConfirmCancel").off('click');
+			$('#plussaGuiConfirmModal').modal('hide');
+			action();
+		});
+		$("#plussaGuiConfirmCancel").click(function() {
+			plussaGuiSettings.successCallback(operationName + " operation canceled.");
+			$("#plussaGuiConfirmOk").off('click');
+		});
+	}
 
 	/* Update jQuery File Tree
 	 * The behaviour of the function depends on whether plussaGuiSettings.activeFileMeta
@@ -187,10 +202,9 @@ $(document).ready(function(){
 	};
 
 
-	/* Callback function for implementing file download after click events of file
-	 * name links in jQuery File Tree.
+	/* The file download implementation.
 	 */
-	var fileDownLoad = function(linkNode) {
+	var doFileDownLoad = function(linkNode) {
 		var filePath = $(linkNode).attr('rel');
 		var projectId = plussaGuiFileTreeGenerator.getActiveProjectId(linkNode);
 		plussaGuiSettings.activeProjectMeta = plussaGuiFileManager.getProjectMetaData(projectId);
@@ -218,6 +232,17 @@ $(document).ready(function(){
 			plussaGuiSettings.errorCallback("File meta data was not found.");
 		}
 		$("#plussaGuiProjectName").text(plussaGuiSettings.activeProjectMeta.name + ": ");
+	}
+
+	/* Callback function for click events of filename links in jQuery File Tree.
+	 */
+	var fileDownLoad = function(linkNode) {
+		if(($('#markItUp').val().length > 0) && !plussaGuiSettings.activeFileMeta) {
+			showConfirmModal('Discarding unsaved changes.', 'Open File', function() { doFileDownLoad(linkNode) });
+		}
+		else {
+			doFileDownLoad(linkNode);
+		}
 	}
 
 	$('#plussaGuiLoadProjectsBtn').click(function() {
@@ -250,6 +275,11 @@ $(document).ready(function(){
 		var projectMeta = plussaGuiSettings.activeProjectMeta;
 		var path = removeSpaces($("#plussaGuiFilePath").text());
 		var newContent = $("#markItUp").val();
+		if(newContent.length == 0) {
+			plussaGuiSettings.errorCallback("File is empty.");
+			$("#markItUp").focus();
+			return;
+		}
 		var successReport = "Saved " + path + " in project: " + projectMeta.name;
 		if(!plussaGuiSettings.activeFileMeta) {
 			// About to save a new file, so open new file panel.
@@ -306,10 +336,12 @@ $(document).ready(function(){
 			$("#plussaGuiPathInput").focus();
 			return;
 		}
-		if(!plussaGuiSettings.allowedFileExtensions.includes(filenameData[1].toLowerCase())) {
-			plussaGuiSettings.errorCallback("Allowed file extensions are: " + plussaGuiSettings.allowedFileExtensions);
-			$("#plussaGuiPathInput").focus();
-			return;
+		if(plussaGuiSettings.checkFileExtension) {
+			if(!plussaGuiSettings.allowedFileExtensions.includes(filenameData[1].toLowerCase())) {
+				plussaGuiSettings.errorCallback("Allowed file extensions are: " + plussaGuiSettings.allowedFileExtensions);
+				$("#plussaGuiPathInput").focus();
+				return;
+			}
 		}
 		if(path.length > 0) {
 			// Concatenate file path and filename.
@@ -384,11 +416,8 @@ $(document).ready(function(){
 			return;
 		}
 		var path = removeSpaces($("#plussaGuiFilePath").text());
-		$('#modalLabel').text('Deleting '+projectMeta.name+': '+path);
-		$('#plussaGuiConfirmModal').modal();
-		$("#plussaGuiConfirmOk").click(function() {
-			$("#plussaGuiConfirmCancel").off('click');
-			$('#plussaGuiConfirmModal').modal('hide');
+		var modalText = 'Deleting '+projectMeta.name+': '+path;
+		showConfirmModal(modalText, 'Delete', function(){
 			plussaGuiGitlabRest.deleteFile(projectMeta.id, branch, path, function(result) {
 				plussaGuiFileManager.updateAfterFileDelete(projectMeta.id, path);
 				$("#markItUp").val("");
@@ -399,10 +428,6 @@ $(document).ready(function(){
 				updateFileTree(projectMeta.id, path);
 				console.log("Deleted file: "+ path);
 			});
-		});
-		$("#plussaGuiConfirmCancel").click(function() {
-			plussaGuiSettings.successCallback("Delete operation canceled.");
-			$("#plussaGuiConfirmOk").off('click');
 		});
 	});
 

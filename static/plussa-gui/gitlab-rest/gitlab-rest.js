@@ -17,6 +17,7 @@ var plussaGuiGitlabRest = (function() {
       // The URL for the request
       url: url,
       encoding: "UTF-8",
+      scriptCharset: "UTF-8",
       // The data to send (will be converted to a query string)
       data: JSON.stringify(data),
       // Whether this is a POST or GET request

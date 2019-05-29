@@ -111,10 +111,10 @@
                     <button type="button" class="btn btn-primary plussaGuiFO" id="plussaGuiDeleteFileBtn">Delete File</button>
                     <button type="button" class="btn btn-primary btn-right plussaGuiFO" id="plussaGuiPreviewBtn">HTML Preview</button>
                     <div class="loader" id="preview_loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-                    <div class="collapse" id="plussaGuiNewFilePanel" style="font-size:14px;">
+                    <div class="collapse" id="plussaGuiNewFilePanel">
                       <div style="padding:15px;">
                         <span style="font-weight:bold;">New File: </span><span id="plussaGuiTargetProject" style="text-decoration:underline;"></span>
-                        <span id="plussaGuiNewFilePath" style="display: inline;"></span>&nbsp;&sol;&nbsp;
+                        <span id="plussaGuiNewFilePath"></span>&nbsp;&sol;&nbsp;
                         <input type="text" id="plussaGuiPathInput" style="display: inline;width:200px;" />
                         <button title="Add new folder to the path" type="button" id="plussaGuiAddFolderBtn"><img src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/images/folder-add-icon.png" class="img-fluid" alt="Responsive image"></button>
                         <button type="button" class="btn btn-primary" id="plussaGuiSaveNewFileBtn">Save</button>
@@ -126,7 +126,7 @@
               <div class="row">
                 <div class="col">
                     <div id="plussaGuiBreadCrumb" style="font-size:14px;margin-top:5px;">
-                      <span style="font-weight:bold;">File: </span><span id="plussaGuiProjectName" style="text-decoration:underline;"></span>&nbsp;
+                      <span id="plussaGuiProjectName"></span>&nbsp;
                       <span id="plussaGuiFilePath"></span>
                     </div>
                   <textarea id="markItUp" rows="15" name="rst" form="preview_html">{ rst }</textarea>
