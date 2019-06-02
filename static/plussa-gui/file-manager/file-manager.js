@@ -307,6 +307,32 @@ var plussaGuiFileManager = (function() {
     }
   }
 
+  /* Find folder or file path in parent folder's meta data JSON, because the resource
+   * in question has not necessarily been downloaded yet.
+   */
+  var resourceExists = function(projectId, path, name) {
+    if(path.length == 0) {
+      // Parent folder is the project root folder, so resource path = name.
+      var projectJSON = projectJSONs.get(projectId);
+      for(item in projectJSON) {
+        if(projectJSON[item].path == name) {
+          return true;
+        }
+      }
+    }
+    else {
+      // Parent folder is path
+      var resourcePath = path + "/" + name;
+      var folderJSON = findFolder(projectId, path);
+      for(item in folderJSON) {
+        if(folderJSON[item].path == resourcePath) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   // Public File Manager API
   return {
       setUserProjects: setUserProjects,
@@ -320,6 +346,7 @@ var plussaGuiFileManager = (function() {
       updateAfterFileDelete: updateAfterFileDelete,
       updateAfterFileSave: updateAfterFileSave,
       isFileLoaded: isFileLoaded,
-      explodeFilePath: explodeFilePath
+      explodeFilePath: explodeFilePath,
+      resourceExists: resourceExists
   };
 })();

@@ -362,14 +362,25 @@ $(document).ready(function(){
 				return;
 			}
 		}
-		if(path.length > 0) {
-			// Concatenate file path and filename.
-			path += "/" + filename;
+		if(plussaGuiFileManager.resourceExists(projectMeta.id, path, filename)) {
+			path = ((path.length > 0)?path+"/":"")+filename;
+			var msg = "File " + path + " in " + plussaGuiSettings.activeProjectMeta.name + " already exists.";
+			showConfirmModal(msg, 'Overwrite', function() {
+				var successReport = "Saved file over " + path + " in project: " + projectMeta.name;
+				console.log("Overwriting to: "+path+"\nContent: "+newContent);
+				plussaGuiGitlabRest.updateFile(projectMeta.id, projectMeta.default_branch, path, newContent, function(result) {
+					plussaGuiFileManager.updateAfterFileSave(projectMeta.id, path, newContent);
+					plussaGuiSettings.successCallback(successReport);
+					plussaGuiSettings.activeFileMeta = plussaGuiFileManager.getFileMetaData(projectMeta.id, path);
+					$("#plussaGuiCancelBtn").click(); // Close new file panel and reset form.
+					$("#plussaGuiFilePath").text(addSpaces(path));
+					$("#plussaGuiProjectName").text(projectMeta.name + ": ");
+				});
+			});
+			return;
 		}
-		else {
-			// No file path data, path equals filename.
-			path = filename;
-		}
+		// Concatenate file path and filename.
+		path = ((path.length > 0)?path+"/":"")+filename;
 		var successReport = "Saved new file " + path + " in project: " + projectMeta.name;
 		/* Save a new file. */
 		console.log("Create file.");
@@ -408,6 +419,12 @@ $(document).ready(function(){
 		var regex = RegExp(plussaGuiSettings.folderRegEx);
 		if(!regex.test(newFolder)) {
 			plussaGuiSettings.errorCallback("Folder names must pass "+plussaGuiSettings.folderRegEx+" test.");
+			$("#plussaGuiPathInput").focus();
+			return;
+		}
+		if(plussaGuiFileManager.resourceExists(plussaGuiSettings.activeProjectMeta.id, path, newFolder)) {
+			var errorMsg = "Folder " + path+"/"+newFolder + " in " + plussaGuiSettings.activeProjectMeta.name + " already exists.";
+			plussaGuiSettings.errorCallback(errorMsg);
 			$("#plussaGuiPathInput").focus();
 			return;
 		}

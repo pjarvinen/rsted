@@ -29,7 +29,7 @@ describe('File operations', function() {
       cy.server()
       cy.route('GET', '*', subfolder)
       cy.contains('folder1').click()
-      cy.get('a[rel="folder1"]').next().next().next().find('li')
+      cy.get('a[rel="folder1"]:first').next().next().next().find('li')
         .should(($li) => {
           expect($li).to.have.length(3)
         })
@@ -104,7 +104,7 @@ describe('File operations', function() {
     })
     cy.get('#plussaGuiSaveFileBtn').click()
     cy.get('#plussaGuiNewFilePanel').should('have.class', 'show')
-    cy.get('a[rel="folder1"]').click()
+    cy.get('a[rel="folder1"]:first').click()
     cy.get('#plussaGuiNewFilePath').should((input) => {
       var path = Cypress.$(input).text()
       expect(path).to.deep.eq('folder1')
@@ -112,32 +112,33 @@ describe('File operations', function() {
   })
   it('validates new folder name after user input', function() {
     cy.get('#plussaGuiAddFolderBtn').click()
-    cy.get('#plussaGuiReport').should('contain', 'Error')
-    cy.wait(2000)
+    cy.get('#plussaGuiReport').should('contain', 'Error') // Empty field.
     cy.get('#plussaGuiPathInput').should((input) => {
-      Cypress.$(input).val('wrong/name')
+      Cypress.$(input).val('folder1')
     })
     cy.get('#plussaGuiAddFolderBtn').click()
-    cy.get('#plussaGuiReport').should('contain', 'Error')
-    cy.wait(2000)
-    cy.get('#plussaGuiPathInput').should((input) => {
-      Cypress.$(input).val('someFolderName')
-    })
+    cy.get('#plussaGuiReport').should('contain', 'Error') // Folder already exists.
+    //cy.wait(2000)
+  })
+  it('hides Add Folder button after user input', function() {
+    // Add folder button should vanish. Only one subfolder addition at a time is allowed.
+    Cypress.$("#plussaGuiPathInput").val('someFolderName')
     cy.get('#plussaGuiAddFolderBtn').click()
-    // Add folder button should vanish. Only one subfolder at a time is allowed.
     cy.get('#plussaGuiAddFolderBtn').should('not.be.visible')
     cy.get('#plussaGuiNewFilePath').should('have.text', 'folder1 / someFolderName')
+  })
+  it('hides New File panel after Cancel click', function() {
     // The filepath input field is empty again after subfolder name was accepted.
     cy.get('#plussaGuiPathInput').should('have.text','')
     cy.get('#plussaGuiCancelBtn').click()
     cy.get('#plussaGuiNewFilePanel').should('not.have.class', 'show')
-    cy.wait(2000)
+    //cy.wait(2000)
   })
   it('validates new filename after user input', function() {
     cy.get('#plussaGuiSaveFileBtn').click()
     cy.get('#plussaGuiNewFilePanel').should('have.class', 'show')
     cy.get('#plussaGuiAddFolderBtn').should('be.visible')
-    cy.get('a[rel="folder1"]').click()
+    cy.get('a[rel="folder1"]:first').click()
     cy.get('#plussaGuiPathInput').should((input) => {
       Cypress.$(input).val('someFolderName')
     })
