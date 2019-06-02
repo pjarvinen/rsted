@@ -29,7 +29,7 @@ describe('File operations', function() {
       cy.server()
       cy.route('GET', '*', subfolder)
       cy.contains('folder1').click()
-      cy.get('a[rel="folder1"]').next().find('li')
+      cy.get('a[rel="folder1"]').next().next().next().find('li')
         .should(($li) => {
           expect($li).to.have.length(3)
         })
@@ -160,7 +160,7 @@ describe('File operations', function() {
           var header = xhr['request']['headers']['PRIVATE-TOKEN']
           expect(header).to.deep.eq(privateToken)
           var url = xhr['xhr']['url']
-          // Full file path 
+          // Full file path
           expect(url).to.contain('folder1/someFolderName/filename.txt')
         }
       })

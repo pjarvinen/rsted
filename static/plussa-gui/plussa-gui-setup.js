@@ -1,5 +1,5 @@
 var plussaGuiSettings = {
-	baseRestUrl: "https://gitlab.com/api/v4/",
+	baseRestUrl: "https://gitlab.com/api/v4/", //https://course-gitlab.tut.fi
 	activeProjectId: 0,
 	activeProjectMeta: false,
 	activeFileMeta: false,
@@ -68,6 +68,24 @@ $(document).ready(function(){
 			plussaGuiSettings.successCallback(operationName + " operation canceled.");
 			$("#plussaGuiConfirmOk").off('click');
 		});
+	}
+
+	var deleteFolder = function(linkNode) {
+		var path = $(linkNode).attr('rel');
+		var projectId = plussaGuiFileTreeGenerator.getActiveProjectId(linkNode);
+		/* Deleting a folder does not set the folder containing project active
+		 * (plussaGuiSettings.activeProjectMeta) at the moment.
+		 */
+		var projectMeta = plussaGuiFileManager.getProjectMetaData(projectId);
+		showConfirmModal('Deleting folder '+path+' from '+projectMeta.name, 'Delete Folder', function() {
+
+		});
+	}
+
+	var renameFolder = function(linkNode) {
+		var path = $(linkNode).attr('rel');
+		var projectId = plussaGuiFileTreeGenerator.getActiveProjectId(linkNode);
+		alert('Renaming folder '+path);
 	}
 
 	/* Update jQuery File Tree
@@ -263,7 +281,8 @@ $(document).ready(function(){
 				plussaGuiFileManager.setUserProjects(result);
 				var fileTreeHTML = plussaGuiFileTreeGenerator.generateFileTreeHTML(result);
 				//console.log(fileTreeHTML);
-				$('#fileTree').fileTree({ treeStructure: fileTreeHTML, script: fileTreeScript }, fileDownLoad);
+				$('#fileTree').fileTree({ treeStructure: fileTreeHTML, script: fileTreeScript },
+					fileDownLoad, deleteFolder, renameFolder);
 			});
 		}
 	});
@@ -416,7 +435,7 @@ $(document).ready(function(){
 			return;
 		}
 		var path = removeSpaces($("#plussaGuiFilePath").text());
-		var modalText = 'Deleting '+projectMeta.name+': '+path;
+		var modalText = 'Deleting '+path+' from '+projectMeta.name;
 		showConfirmModal(modalText, 'Delete', function(){
 			plussaGuiGitlabRest.deleteFile(projectMeta.id, branch, path, function(result) {
 				plussaGuiFileManager.updateAfterFileDelete(projectMeta.id, path);

@@ -33,7 +33,7 @@
 if(jQuery) (function($){
 
 	$.extend($.fn, {
-		fileTree: function(o, h) {
+		fileTree: function(o, fileCb, deleteFolderCb, renameFolderCb) {
 			// Defaults
 			if( !o ) var o = {};
 			if( o.root == undefined ) o.root = '/this/folder';
@@ -89,7 +89,9 @@ if(jQuery) (function($){
 				}*/
 
 				function bindTree(t) {
-					$(t).find('LI A').on(o.folderEvent, function() {
+					// Original code line:
+					//$(t).find('LI A').on(o.folderEvent, function() {
+					$(t).find('.fileTreeLink').on(o.folderEvent, function() {
 						if( $(this).parent().hasClass('directory') ) {
 							if( $(this).parent().hasClass('collapsed') ) {
 								// Expand
@@ -104,26 +106,37 @@ if(jQuery) (function($){
 								showTree( $(this).parent(), escape($(this).attr('rel').match( /.*\// )) ); */
 								$(this).parent().removeClass('collapsed').addClass('expanded');
 							} else {
-								// Collapse
-								$(this).parent().find('UL').slideUp({ duration: o.collapseSpeed, easing: o.collapseEasing });
-								$(this).parent().removeClass('expanded').addClass('collapsed');
+								// The option of Collapsing directories is removed
+								//$(this).parent().find('UL').slideUp({ duration: o.collapseSpeed, easing: o.collapseEasing });
+								//$(this).parent().removeClass('expanded').addClass('collapsed');
 								/* Added code for Plussa GUI purposes. Call folder loading script in all cases.
-								 * In this instance no HTML code is generated since the folder is closing, so the callback
-								 * function is empty. 
+								 * In this instance no HTML code is generated. Folder click is the chosen file destination.
 								 */
 								o.script( $(this).parent(), $(this).attr('rel'), function(p) { return; } );
 							}
+
 						} else {
 							/* Modified code for Plussa GUI purposes. */
-							h($(this));
+							fileCb($(this)); // File download callback.
 							/* Original code commented out
 							h($(this).attr('rel')); */
 						}
 						return false;
 					});
+					// Folder operation link events.
+					$(t).find('.deleteFolderLink').on('click', function() {
+						deleteFolderCb($(this));
+						return false;
+					});
+					$(t).find('.renameFolderLink').on('click', function() {
+						renameFolderCb($(this));
+						return false;
+					});
 					// Prevent A from triggering the # on non-click events
 					if( o.folderEvent.toLowerCase != 'click' ) $(t).find('LI A').on('click', function() { return false; });
 				}
+
+
 				// Loading message
 				$(this).html('<ul class="jqueryFileTree start"><li class="wait">' + o.loadMessage + '<li></ul>');
 				// Get the initial file list
