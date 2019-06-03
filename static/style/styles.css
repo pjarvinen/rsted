@@ -143,6 +143,10 @@
     min-width: 534px;
   }
 
+  #plussaGuiPublishBtn {
+    margin-bottom: 2em;
+  }
+
   html {
     font-size: 12px;
   }
