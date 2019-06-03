@@ -173,6 +173,21 @@
     width: 100%;
   }
 
+  #courseInfo {
+    margin: 10px;
+  }
+
+  .examplebox {
+    border: 1px dashed #aac4db;
+    border-radius: 4px;
+    margin: 4px;
+    padding: 20px;
+  }
+
+  li {
+    padding: 5px;
+  }
+
 /* Loading animation */
 .loader {
   color: official;
