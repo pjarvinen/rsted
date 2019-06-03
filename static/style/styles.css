@@ -98,6 +98,10 @@
     min-width: 450;
   }
 
+  #bar {
+    background-color: #aac4db
+  }
+
   .btn-primary {
     width: 120px;
     background-color: #337ab7;
