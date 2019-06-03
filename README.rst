@@ -38,3 +38,14 @@ In a docker installed host, just build and run::
 A server starts on port 5000. Please adjust it, if you need another port
 by changing run command above. And then just visit http://localhost:5000/ in
 your browser.
+
+Testing
+----------
+Install the Cypress test runner::
+
+    npm install
+    
+Run the tests::
+
+    npm test
+    
