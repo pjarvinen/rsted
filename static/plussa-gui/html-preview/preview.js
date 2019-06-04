@@ -56,7 +56,7 @@ var plussaGuiPreview = (function() {
                 document.getElementById("publish_loader").style.display = "none";
                 plussaGuiSettings.successCallback("Project was published");
             } else if (xhr.readyState == 4 && xhr.status != 200) {
-                plussaGuiSettings.successCallback("Error when publishing the project");
+                plussaGuiGitlabRest.errorCallback("Error when publishing the project");
             }
         };
     }
