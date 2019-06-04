@@ -37,31 +37,34 @@
     <script src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/plussa-gui-setup.js"></script>
     <script src="{{ request.script_root }}{{ MEDIA_URL }}plussa-gui/html-preview/preview.js"></script>
   </head>
+
   <body>
-  <script type="text/javascript">
+    <script type="text/javascript">
       var script_root = {{ request.script_root|tojson|safe }};
-  </script>
-  <!-- Modal -->
-  <div class="modal fade" id="plussaGuiConfirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title" id="modalLabel"></h3>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    </script>
+
+    <!-- Modal -->
+    <div class="modal fade" id="plussaGuiConfirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title" id="modalLabel"></h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <h4 class="modal-body">
-          Is it Ok to proceed?
-        </h4>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="plussaGuiConfirmCancel">Cancel</button>
-          <button type="button" class="btn btn-primary" id="plussaGuiConfirmOk">Ok</button>
+            </button>
+          </div>
+          <h4 class="modal-body">
+            Is it Ok to proceed?
+          </h4>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="plussaGuiConfirmCancel">Cancel</button>
+            <button type="button" class="btn btn-primary" id="plussaGuiConfirmOk">Ok</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <!-- Header container-->
+
+    <!-- Header container-->
     <div class="container-fluid" id="topContainer">
       <div class="row">
         <div class="col-12">
@@ -69,9 +72,11 @@
             <h1 class="page-header">A-plus LMS course editor</h1>
           </div>
         </div>
-        <div id="plussaGuiReport"></div>
+        <div id="plussaGuiReport">
+        </div>
       </div>
     </div>
+
     <!-- Credentials container -->
     <div class="container-fluid p-0" id="bar">
       <div class="row no-gutters">
@@ -82,7 +87,9 @@
               <button type="button" class="btn btn-primary" id="plussaGuiLoadProjectsBtn">Load Projects</button>
             </form>
           </div>
-          <div class="col"><!-- Tabs -->
+          <div class="col">
+
+            <!-- Tabs Nav Bar-->
             <ul class="nav nav-pills nav-justified" id="tabs" role="tablist">
               <li class="nav-item">
                 <a class="nav-link active" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="editor" aria-selected="true">Editor</a>
@@ -98,10 +105,11 @@
       </div>
     </div>
 
+    <!-- Editor Tab  -->
     <div class="tab-content" id="tabContent">
-      <!-- Editor Tab -->
       <div class="tab-pane fade show active" id="edit" role="tabpanel" aria-labelledby="editor-tab">
-      <!-- Two columns container -->
+
+        <!-- Two columns container -->
         <div class="container-fluid">
           <div class="row">
             <div class="col-3 bluebg">
@@ -114,7 +122,8 @@
                     <button type="button" class="btn btn-primary plussaGuiFO" id="plussaGuiNewFileBtn">New File</button>
                     <button type="button" class="btn btn-primary plussaGuiFO" id="plussaGuiDeleteFileBtn">Delete File</button>
                     <button type="button" class="btn btn-primary btn-right plussaGuiFO" id="plussaGuiPreviewBtn">HTML Preview</button>
-                    <div class="loader" id="preview_loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                    <div class="loader" id="preview_loader">
+                    <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                     <div class="collapse" id="plussaGuiNewFilePanel">
                       <div style="padding:15px;">
                         <span style="font-weight:bold;">New File: </span><span id="plussaGuiTargetProject" style="text-decoration:underline;"></span>
@@ -144,6 +153,7 @@
           </div>
         </div>
       </div>
+
       <!-- Log Tab -->
       <div class="tab-pane fade" id="plussaGuiCommitLog" role="tabpanel" aria-labelledby="plussaGuiCommitLog-tab">
         <div class="container">
@@ -154,75 +164,90 @@
           </div>
           <div class="row">
             <div class="col" id="plussaGuiCommitListTarget" style="padding:50px;">
-
             </div>
           </div>
         </div>
       </div>
+
       <!-- Info Tab -->
       <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab"><div class="col container-fluid">
         <div id="courseInfo">
-        <h1>Creating a course</h1>
-        <ol>
-        <li>Download your course repositories after entering your user id and security token from GitLab.
-        Then you can open your project folder by clicking the project name on the file tree.
-        </li>
-        <li> You can start by defining the structure for your course module. Main structure is defined in the index.rst file.  You can decide language with modules.
-        It is up to you how you do our courses structure. Experience has shown that /round1 notation is good one. You can link other rst-files to index with .. toctree::
-        notation. </li>
-        <details>
-        <summary><b>Examples:</b></summary>
-        <div class="examplebox">
-          <i>Here is example of selecting language with modules: </i><br><br>
-          <p>Kandiseminaari kevät 2019 <br>
-            ================================
-          <br>
-          .. toctree::<br>
-          :maxdepth: 3<br>
-          :caption: Select language<br>
+          <h1>Creating a course</h1>
+          <ol>
+            <li>
+              Download your course repositories after entering your user id and security token from GitLab. Then you can open your project folder by clicking the project name on the file tree.
+            </li>
+            <li>
+              You can start by defining the structure for your course module. Main structure is defined in the index.rst file.  You can decide language with modules.
+              It is up to you how you do our courses structure. Experience has shown that /round1 notation is good one. You can link other rst-files to index with .. toctree::
+              notation.
+            </li>
 
-          Finnish <´modules/index_fi><br>
-          English <`modules/index_en><br>
-          </p>
-      </div>
-      <div class="examplebox">
-        <p>
-          <i>Here is example of index`s structure:</i></p>
-          index.rst<br>
-            &nbsp;modules/<br>
-                &nbsp;&nbsp;index_fi.rst<br>
-                &nbsp;&nbsp;index_en.rst<br>
-            &nbsp;round1/<br>
-                &nbsp;&nbsp;index_fi.rst<br>
-                &nbsp;&nbsp;index_en.rst<br>
-            &nbsp;round2/<br>
-                &nbsp;&nbsp;index_fi.rst<br>
-                &nbsp;&nbsp;index_en.rst<br>
-        </p>
-      </div>
-    </details>
-        <li> Write your course contents in <i>rst</i>-files. You can find more information on <a href="http://www.sphinx-doc.org/en/master/index.html">http://www.sphinx-doc.org/en/master/index.html</a>
-        and there are also more examples A+ course templates. </li>
-        <li> When do you want to preview your <i>rst</i>-file. Click <b>"HTML preview"</b> button on top right and it opens a new window with preview of your file. You can see how it looks like on the web browser
-        </li>
-      </ol>
+            <!-- Examples -->
+            <details>
+              <summary><b>Examples:</b></summary>
+              <div class="examplebox">
+                <i>Here is example of selecting language with modules: </i><br><br>
+                <p>Kandiseminaari kevät 2019 <br>
+                  ================================
+                  <br>
+                  .. toctree::<br>
+                  :maxdepth: 3<br>
+                  :caption: Select language<br>
+
+                  Finnish <´modules/index_fi><br>
+                  English <`modules/index_en><br>
+                </p>
+              </div>
+              <div class="examplebox">
+                <p>
+                  <i>Here is example of index`s structure:</i></p>
+                  index.rst<br>
+                  &nbsp;modules/<br>
+                      &nbsp;&nbsp;index_fi.rst<br>
+                      &nbsp;&nbsp;index_en.rst<br>
+                  &nbsp;round1/<br>
+                      &nbsp;&nbsp;index_fi.rst<br>
+                      &nbsp;&nbsp;index_en.rst<br>
+                  &nbsp;round2/<br>
+                      &nbsp;&nbsp;index_fi.rst<br>
+                      &nbsp;&nbsp;index_en.rst<br>
+                </p>
+              </div>
+            </details>
+            <li>
+              Write your course contents in <i>rst</i>-files. You can find more information on 
+              <a href="http://www.sphinx-doc.org/en/master/index.html">http://www.sphinx-doc.org/en/master/index.html</a>
+              and there are also more examples A+ course templates.
+            </li>
+            <li>
+              When do you want to preview your <i>rst</i>-file. Click <b>"HTML preview"</b> 
+              button on top right and it opens a new window with preview of your file. You can see how it looks like on the web browser
+            </li>
+          </ol>
 
         <h2>Publish</h2>
-
-        <p> You can publish your work by using <b>"Publish"</b> button. This sends commits to Gitlab server and you can check the new commits on the Gitlab, if you want to make sure.
-        This may take 1-2minutes. After this is done you can see your files and edits on the Gitlab.
-
+        <p>
+          You can publish your work by using <b>"Publish"</b> button. 
+          This sends commits to Gitlab server and you can check the new commits on the Gitlab, if you want to make sure.
+          This may take 1-2minutes. After this is done you can see your files and edits on the Gitlab.
         </p>
 
         <h2> Create new file</h2>
-        <p> You can create new file by clicking <b>"New file"</b> button and then clicking "save file" button on this stage input field opens where you can name your file and give it file type.
-        In case of rst it is .rst end. </p>
+        <p>
+          You can create new file by clicking <b>"New file"</b> 
+          button and then clicking "save file" button on this stage input field opens where you can name your file and give it file type.
+          In case of rst it is .rst end.
+        </p>
 
         <h2> Delete file </h2>
-        <p> Delete file by clicking <b>"Delete file"</b> button this automatically updates the file tree and when you press "Publish" it deletes file from gitlab too. </p>
-    </div></div></div>
+        <p>
+          Delete file by clicking <b>"Delete file"</b> 
+          button this automatically updates the file tree and when you press "Publish" it deletes file from gitlab too.
+        </p>
+      </div>
     </div>
+  </div>
 
-
-  </body>
+</body>
 </html>
