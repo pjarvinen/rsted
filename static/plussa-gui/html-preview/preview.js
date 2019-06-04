@@ -54,6 +54,9 @@ var plussaGuiPreview = (function() {
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 document.getElementById("publish_loader").style.display = "none";
+                plussaGuiSettings.successCallback("Project was published");
+            } else if (xhr.readyState == 4 && xhr.status != 200) {
+                plussaGuiSettings.successCallback("Error when publishing the project");
             }
         };
     }
