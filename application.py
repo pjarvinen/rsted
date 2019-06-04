@@ -50,10 +50,8 @@ def preview():
         return ""
     else:
         compiler = RSTCompiler(project, token, filepath)
-        if not compiler.directory_exists():
-            print("Directory doesnt exist")
-            compiler.download_archive()
-        with open(compiler.dirpath + filepath, "w") as rf:
+        compiler.download_archive()
+        with open(compiler.dirpath + filepath, "w+") as rf:
             rf.write(rst)
         compiler.compile_rst()
         return compiler.get_html()
@@ -71,19 +69,6 @@ def publish():
         compiler.compile_rst()
         compiler.publish()
         return compiler.get_html()
-
-@app.route('/srv/loadproject/', methods=['POST', 'GET'])
-def loadproject():
-    token = request.form.get('token', '')
-    project = request.form.get('project', '')
-    filepath = request.form.get('filepath', '')
-    if not token or not project or not filepath:
-        return ""
-    else:
-        compiler = RSTCompiler(project, token, filepath)
-        if compiler.download_archive():
-            compiler.compile_rst()
-            return compiler.get_html()
 
 
 @app.route('/temp/<path:filename>')
