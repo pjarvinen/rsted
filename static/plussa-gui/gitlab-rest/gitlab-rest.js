@@ -131,6 +131,16 @@ var plussaGuiGitlabRest = (function() {
     }
   }
 
+  /*
+   * Downloads commit listing since (YYYY-MM-DD) a given day from the
+   * projects default branch. 
+   */
+  var getCommitHistory = function(projectId, since, callback) {
+    var dateEndSnippet = "T00:00:00Z";
+    var url = plussaGuiGitlabRest.baseUrl + "projects/" + projectId + "/repository/commits?since=" + since + dateEndSnippet;
+    doRestQuery(url, plussaGuiGitlabRest.privateToken, "GET", {}, callback);
+  }
+
   // Public REST Query API
   return {
       init: init,
@@ -144,6 +154,7 @@ var plussaGuiGitlabRest = (function() {
       deleteFile: deleteFile,
       renameFolder: renameFolder,
       deleteFolder: deleteFolder,
-      getUserCredentials: getUserCredentials
+      getUserCredentials: getUserCredentials,
+      getCommitHistory: getCommitHistory
   };
 })();

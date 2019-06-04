@@ -13,9 +13,10 @@ var plussaGuiFileTreeGenerator = (function() {
     fileLink: function(path, linkText) { return '<a href="#" rel="'+path+'" class="fileTreeLink">'+linkText+'</a>'; },
     // Folder operation links are generated as a dropdown list after the folder link.
     folderLink: function(path, linkText) {
-      return '<a href="#" rel="'+path+'" class="fileTreeLink">'+linkText+'</a>'+
+      return '<a href="#" rel="'+path+'" class="fileTreeLink">'+linkText+'</a>';/*+
+      Folder removal and folder renaming links not being generated.
       '<a href="#" rel="'+path+'" class="deleteFolderLink fa fa-trash" title="Delete folder '+path+'"></a>'+
-      '<a href="#" rel="'+path+'" class="renameFolderLink fa" title="Rename folder '+path+'">Re</a>';
+      '<a href="#" rel="'+path+'" class="renameFolderLink fa" title="Rename folder '+path+'">Re</a>';*/
     }
   }
 
@@ -95,6 +96,18 @@ var plussaGuiFileTreeGenerator = (function() {
     }
   }
 
+  var buildCommitListing = function(target, listingJSON) {
+    var result = '<table id="plussaGuiCommitListing" class="table"><thead><tr><th scope="col">#</th><th scope="col">Date</th><th scope="col">Action</th><th scope="col">Author</th></tr></thead><tbody>';
+    for(item in listingJSON) {
+      result += '<tr><th scope="row">' + (parseInt(item) + 1) + '</th>';
+      result += '<td>' + listingJSON[item]["created_at"].substr(0, 10) + '</td>';
+      result += '<td>' + listingJSON[item]["message"] + '</td>';
+      result += '<td>' + listingJSON[item]["author_name"] + '</td></tr>';
+    }
+    result += "</tbody></table>";
+    $(target).html(result);
+  }
+
   // HTML material for testing
   var fileTreeForTesting = function() {
     return '<ul class="jqueryFileTree" style=""><li id="aPlus-11862275" class="directory expanded"><a href="#" rel="testinen" class="fileTreeLink">Testinen</a><ul class="jqueryFileTree" style=""><li class="directory expanded"><a href="#" rel="folder1" class="fileTreeLink">folder1</a><a class="folderOpLink" title="Delete Folder" href="javascript:plussaGuiDeleteFolder(\'folder1\')">D</a><a class="folderOpLink" title="Rename Folder" href="javascript:plussaGuiRenameFolder(\'folder1\')">R</a><ul class="jqueryFileTree" style=""><li class="file ext_txt"><a href="#" rel="folder1/testi.txt" class="fileTreeLink">testi.txt</a></li><li class="file ext_txt"><a href="#" rel="folder1/uusi.txt" class="fileTreeLink">uusi.txt</a></li></ul></li><li class="directory collapsed"><a href="#" rel="uusi" class="fileTreeLink">uusi</a><a class="folderOpLink" title="Delete Folder" href="javascript:plussaGuiDeleteFolder(\'uusi\')">D</a><a class="folderOpLink" title="Rename Folder" href="javascript:plussaGuiRenameFolder(\'uusi\')">R</a></li><li class="file ext_md"><a href="#" rel="README.md" class="fileTreeLink">README.md</a></li></ul></li><li id="aPlus-10918435" class="directory collapsed"><a href="#" rel="tuniplussa" class="fileTreeLink">TuniPlussa</a></li></ul>';
@@ -108,6 +121,7 @@ var plussaGuiFileTreeGenerator = (function() {
       induceFolderOpenClick: induceFolderOpenClick,
       induceProjectOpenClick: induceProjectOpenClick,
       updateAfterFolderAddition: updateAfterFolderAddition,
+      buildCommitListing: buildCommitListing,
       fileTreeForTesting: fileTreeForTesting
   };
   })();

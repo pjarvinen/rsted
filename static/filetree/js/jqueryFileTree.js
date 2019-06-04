@@ -122,7 +122,8 @@ if(jQuery) (function($){
 							h($(this).attr('rel')); */
 						}
 						return false;
-					});
+					});/*
+					Folder removal and renaming operation links are not being generated. See file-tree-generator.js.
 					// Folder operation link events.
 					$(t).find('.deleteFolderLink').on('click', function() {
 						deleteFolderCb($(this));
@@ -131,7 +132,7 @@ if(jQuery) (function($){
 					$(t).find('.renameFolderLink').on('click', function() {
 						renameFolderCb($(this));
 						return false;
-					});
+					});*/
 					// Prevent A from triggering the # on non-click events
 					if( o.folderEvent.toLowerCase != 'click' ) $(t).find('LI A').on('click', function() { return false; });
 				}

@@ -1,6 +1,5 @@
 var plussaGuiSettings = {
-	baseRestUrl: "https://gitlab.com/api/v4/", //https://course-gitlab.tut.fi
-	activeProjectId: 0,
+	baseRestUrl: "https://gitlab.com/api/v4/",
 	activeProjectMeta: false,
 	activeFileMeta: false,
 	activeFolder: false,
@@ -55,6 +54,17 @@ $(document).ready(function(){
 	$("#markItUp").val("");
   // Setup markItUp! a javascript text editor
 	$('#markItUp').markItUp(markItUpSettings);
+
+	// Returns a YYYY-MM-DD presentation of a given date.
+	var formatDate = function(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    return [year, month, day].join('-');
+	}
 
 	var showConfirmModal = function(labelText, operationName, action) {
 		$('#plussaGuiConfirmModal').modal();
@@ -183,7 +193,6 @@ $(document).ready(function(){
 			// If not a project root folder click, get the id from a helper function.
 			projectId = plussaGuiFileTreeGenerator.getActiveProjectId(node);
 		}
-		plussaGuiSettings.activeProjectId = projectId;
 		plussaGuiSettings.activeProjectMeta = plussaGuiFileManager.getProjectMetaData(projectId);
 		var fileTreeJSON = {};
 		if(isProjectRoot) {
@@ -467,12 +476,21 @@ $(document).ready(function(){
 		});
 	});
 
+	$("#plussaGuiShowCommitsLog").click(function (e) {
+		var oneWeekFromNow = Date.now() - 604800000;
+		var dateString = formatDate(oneWeekFromNow);
+		console.log("Commits since: "+dateString);
+		plussaGuiGitlabRest.getCommitHistory(plussaGuiSettings.activeProjectMeta.id, dateString, function(result) {
+			plussaGuiFileTreeGenerator.buildCommitListing('#plussaGuiCommitListTarget', result);
+		});
+	});
+
 	$("#plussaGuiPreviewBtn").click(function() {
-		plussaGuiPreview.openPreview(plussaGuiSettings.activeProjectId, plussaGuiSettings.activeFileMeta.path);
+		plussaGuiPreview.openPreview(plussaGuiSettings.activeProjectMeta.id, plussaGuiSettings.activeFileMeta.path);
 	});
 
 	$("#plussaGuiPublishBtn").click(function() {
-		plussaGuiPreview.publish(plussaGuiSettings.activeProjectId, plussaGuiSettings.activeFileMeta.path);
+		plussaGuiPreview.publish(plussaGuiSettings.activeProjectMeta.id, plussaGuiSettings.activeFileMeta.path);
 	});
 
 });
