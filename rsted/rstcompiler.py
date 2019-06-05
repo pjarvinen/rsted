@@ -24,21 +24,19 @@ class RSTCompiler:
         url = base_url + str(self.project_id) + "/repository/archive.zip"
         # Set Private Token as header
         headers = {'PRIVATE-TOKEN': self.token}
-        print(headers)
         # Make the API request
         #r = requests.get(url, headers=headers, stream=True)
         req = urllib.request.Request(url, headers=headers)
         r = urllib.request.urlopen(req)
-        print("url")
-        #try:
-        with ZipFile(BytesIO(r.read())) as zipObj:
-            namelist = zipObj.namelist()
-            zipObj.extractall("temp")
-            os.rename("temp/" + str(namelist[0])[:-1], "temp/" + str(self.project_id))
-            return self.dirpath
-        #except:
-        #    print("Unexpected error while extracting zip file: ", sys.exc_info()[0])
-        #    return None
+        try:
+            with ZipFile(BytesIO(r.read())) as zipObj:
+                namelist = zipObj.namelist()
+                zipObj.extractall("temp")
+                os.rename("temp/" + str(namelist[0])[:-1], "temp/" + str(self.project_id))
+                return self.dirpath
+        except:
+            print("Unexpected error while extracting zip file: ", sys.exc_info()[0])
+            return None
 
 
     def compile_rst(self):
@@ -72,15 +70,16 @@ class RSTCompiler:
         create_data = {
             'branch_name': 'master',  # v3
             'branch': 'master',  # v4
-            'commit_message': 'New Build from PlussaGUI',
+            'commit_message': 'New Build from PlussaGUI (New Files)',
             'actions': []
         }
         update_data = {
             'branch_name': 'master',  # v3
             'branch': 'master',  # v4
-            'commit_message': 'New Build from PlussaGUI',
+            'commit_message': 'New Build from PlussaGUI (Updated Files)',
             'actions': []
         }
+        # Go through all files in the build folder and prepare data to be sent to gitlab
         for elem in listOfFiles:
             f = None
             try:
