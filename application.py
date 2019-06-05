@@ -11,10 +11,6 @@ from rsted.rstcompiler import RSTCompiler
 
 from flaskext.helpers import render_html
 
-# handle relative path references by changing to project directory
-run_from = os.path.dirname(os.path.abspath(sys.argv[0]))
-if run_from != os.path.curdir:
-    os.chdir(run_from)
 
 # create our little application :)
 app = Flask(__name__)
