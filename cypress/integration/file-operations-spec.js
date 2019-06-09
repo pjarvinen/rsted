@@ -29,7 +29,7 @@ describe('File operations', function() {
       cy.server()
       cy.route('GET', '*', subfolder)
       cy.contains('folder1').click()
-      cy.get('a[rel="folder1"]:first').next().next().next().find('li')
+      cy.get('a[rel="folder1"]:first').next().find('li')
         .should(($li) => {
           expect($li).to.have.length(3)
         })
@@ -95,7 +95,6 @@ describe('File operations', function() {
       var empty = Cypress.$(path).text()
       expect(empty).to.deep.eq('')
     })
-    cy.wait(1000)
     cy.get('button.close').click()  // Again, needed in tests because of Bootstrap.
   })
   it('updates the new filename path after file tree clicks', function() {
@@ -111,17 +110,14 @@ describe('File operations', function() {
     })
   })
   it('validates new folder name after user input', function() {
-    cy.get('#plussaGuiAddFolderBtn').click()
-    cy.get('#plussaGuiReport').should('contain', 'Error') // Empty field.
-    cy.get('#plussaGuiPathInput').should((input) => {
-      Cypress.$(input).val('folder1')
-    })
+    Cypress.$('#plussaGuiNewFilePath').text('')
+    Cypress.$('#plussaGuiPathInput').val('folder1')
     cy.get('#plussaGuiAddFolderBtn').click()
     cy.get('#plussaGuiReport').should('contain', 'Error') // Folder already exists.
-    //cy.wait(2000)
   })
   it('hides Add Folder button after user input', function() {
     // Add folder button should vanish. Only one subfolder addition at a time is allowed.
+    cy.get('a[rel="folder1"]:first').click()
     Cypress.$("#plussaGuiPathInput").val('someFolderName')
     cy.get('#plussaGuiAddFolderBtn').click()
     cy.get('#plussaGuiAddFolderBtn').should('not.be.visible')
@@ -134,38 +130,5 @@ describe('File operations', function() {
     cy.get('#plussaGuiNewFilePanel').should('not.have.class', 'show')
     //cy.wait(2000)
   })
-  it('validates new filename after user input', function() {
-    cy.get('#plussaGuiSaveFileBtn').click()
-    cy.get('#plussaGuiNewFilePanel').should('have.class', 'show')
-    cy.get('#plussaGuiAddFolderBtn').should('be.visible')
-    cy.get('a[rel="folder1"]:first').click()
-    cy.get('#plussaGuiPathInput').should((input) => {
-      Cypress.$(input).val('someFolderName')
-    })
-    cy.get('#plussaGuiAddFolderBtn').click()
-    cy.get('#plussaGuiPathInput').should((input) => {
-      Cypress.$(input).val('wrong-filename')
-    })
-    cy.get('#plussaGuiSaveNewFileBtn').click()
-    cy.get('#plussaGuiReport').should('contain', 'Error')
-    cy.wait(2000)
-    cy.get('#plussaGuiPathInput').should((input) => {
-      Cypress.$(input).val('filename.txt')
-      cy.server()
-      cy.route({
-        method: 'POST',
-        url: '*',
-        response: {},
-        onRequest: (xhr) => {
-          console.log(JSON.stringify(xhr))
-          var header = xhr['request']['headers']['PRIVATE-TOKEN']
-          expect(header).to.deep.eq(privateToken)
-          var url = xhr['xhr']['url']
-          // Full file path
-          expect(url).to.contain('folder1/someFolderName/filename.txt')
-        }
-      })
-    })
-    cy.get('#plussaGuiSaveNewFileBtn').click()
-  })
+
 })

@@ -7,6 +7,7 @@ var plussaGuiSettings = {
 	fileNameRegEx: "^[a-zA-Z0-9_]*$",
 	allowedFileExtensions: ['rst', 'txt', 'yaml', 'xml', 'md', 'html', 'css', 'py', 'class', 'conf'],
 	checkFileExtension: false,
+	defaultWeeksForCommitListing: 4,
 	errorCallback: function(message) {
 		var elem = $('#plussaGuiReport');
 		elem.addClass("plussaGuiError");
@@ -78,24 +79,6 @@ $(document).ready(function(){
 			plussaGuiSettings.successCallback(operationName + " operation canceled.");
 			$("#plussaGuiConfirmOk").off('click');
 		});
-	}
-
-	var deleteFolder = function(linkNode) {
-		var path = $(linkNode).attr('rel');
-		var projectId = plussaGuiFileTreeGenerator.getActiveProjectId(linkNode);
-		/* Deleting a folder does not set the folder containing project active
-		 * (plussaGuiSettings.activeProjectMeta) at the moment.
-		 */
-		var projectMeta = plussaGuiFileManager.getProjectMetaData(projectId);
-		showConfirmModal('Deleting folder '+path+' from '+projectMeta.name, 'Delete Folder', function() {
-
-		});
-	}
-
-	var renameFolder = function(linkNode) {
-		var path = $(linkNode).attr('rel');
-		var projectId = plussaGuiFileTreeGenerator.getActiveProjectId(linkNode);
-		alert('Renaming folder '+path);
 	}
 
 	/* Update jQuery File Tree
@@ -228,8 +211,8 @@ $(document).ready(function(){
 		$("#plussaGuiTargetProject").text(plussaGuiSettings.activeProjectMeta.name);
 	};
 
-
-	/* The file download implementation.
+	/*
+	 * The file download implementation.
 	 */
 	var doFileDownLoad = function(linkNode) {
 		var filePath = $(linkNode).attr('rel');
@@ -261,7 +244,8 @@ $(document).ready(function(){
 		$("#plussaGuiProjectName").text(plussaGuiSettings.activeProjectMeta.name + ": ");
 	}
 
-	/* Callback function for click events of filename links in jQuery File Tree.
+	/*
+	 * Callback function for click events of filename links in jQuery File Tree.
 	 */
 	var fileDownLoad = function(linkNode) {
 		if(($('#markItUp').val().length > 0) && !plussaGuiSettings.activeFileMeta) {
@@ -272,6 +256,9 @@ $(document).ready(function(){
 		}
 	}
 
+	/*
+	 * Loads the metadata of all of the user's GitLab projects.
+	 */
 	$('#plussaGuiLoadProjectsBtn').click(function() {
 		var userId = $('#userId').val();
 		var privateToken = $('#privateToken').val();
@@ -290,14 +277,13 @@ $(document).ready(function(){
 				plussaGuiFileManager.setUserProjects(result);
 				var fileTreeHTML = plussaGuiFileTreeGenerator.generateFileTreeHTML(result);
 				//console.log(fileTreeHTML);
-				$('#fileTree').fileTree({ treeStructure: fileTreeHTML, script: fileTreeScript },
-					fileDownLoad, deleteFolder, renameFolder);
+				$('#fileTree').fileTree({ treeStructure: fileTreeHTML, script: fileTreeScript }, fileDownLoad);
 			});
 		}
 	});
 
 	/*
-	 * Update file OR open a panel for entering a new filename.
+	 * Updates a repository file OR opens a panel for entering a new filename.
 	 */
 	$("#plussaGuiSaveFileBtn").click(function() {
 		var projectMeta = plussaGuiSettings.activeProjectMeta;
@@ -329,9 +315,9 @@ $(document).ready(function(){
 		}
 	});
 
-		/*
-		 * Save a new file.
-		 */
+	/*
+	 * Saves a new file to the repository.
+	 */
 	$("#plussaGuiSaveNewFileBtn").click(function() {
 		var projectMeta = plussaGuiSettings.activeProjectMeta;
 		var path = removeSpaces($("#plussaGuiNewFilePath").text());
@@ -381,7 +367,7 @@ $(document).ready(function(){
 					plussaGuiFileManager.updateAfterFileSave(projectMeta.id, path, newContent);
 					plussaGuiSettings.successCallback(successReport);
 					plussaGuiSettings.activeFileMeta = plussaGuiFileManager.getFileMetaData(projectMeta.id, path);
-					$("#plussaGuiCancelBtn").click(); // Close new file panel and reset form.
+					$("#plussaGuiCancelBtn").click(); // Close new file panel and reset form (Cancel is also the panel view toggle button).
 					$("#plussaGuiFilePath").text(addSpaces(path));
 					$("#plussaGuiProjectName").text(projectMeta.name + ": ");
 				});
@@ -407,8 +393,10 @@ $(document).ready(function(){
 
 	});
 
+	/*
+	 * Resets the current active file data and clears the editor.
+	 */
 	$("#plussaGuiNewFileBtn").click(function() {
-		// TODO: Confirmation prompt, if appropriate.
 		$("#markItUp").val("");
 		$("#plussaGuiPathInput").val("");
 		$("#plussaGuiFilePath").text("");
@@ -417,6 +405,9 @@ $(document).ready(function(){
 		$("#markItUp").focus();
 	});
 
+	/*
+	 * Adds a new folder name to the new file path.
+	 */
 	$("#plussaGuiAddFolderBtn").click(function() {
 		var path = $("#plussaGuiNewFilePath").text();
 		var newFolder = $("#plussaGuiPathInput").val();
@@ -447,12 +438,19 @@ $(document).ready(function(){
 		$(this).hide();
 	});
 
+	/*
+	 * Reset the New File panel and toggle the view. See index.html for attached
+	 * Bootstrap functionality.
+	 */
 	$("#plussaGuiCancelBtn").click(function() {
 		$("#plussaGuiNewFilePath").text("");
 		$("#plussaGuiPathInput").val("");
 		$("#plussaGuiAddFolderBtn").show();
 	});
 
+	/*
+	 * Delete a file from the repository.
+	 */
 	$("#plussaGuiDeleteFileBtn").click(function() {
 		var projectMeta = plussaGuiSettings.activeProjectMeta;
 		var branch = projectMeta.default_branch;
@@ -476,12 +474,41 @@ $(document).ready(function(){
 		});
 	});
 
+	/*
+	 * Commit listing shows the commits since the given number of weeks ago.
+	 * The public community server apparently sends only 20 latest commits. More information:
+ 	 * https://docs.gitlab.com/ee/api/commits.html
+	 */
 	$("#plussaGuiShowCommitsLog").click(function (e) {
-		var oneWeekFromNow = Date.now() - 604800000;
-		var dateString = formatDate(oneWeekFromNow);
+		var weeks = $('#plussaGuiWeeks').val();
+		if(weeks.length == 0 || parseInt(weeks) == NaN) {
+			weeks = plussaGuiSettings.defaultWeeksForCommitListing;
+		}
+		else {
+			weeks = parseInt(weeks);
+		}
+		var dateMillis = Date.now() - (604800000 * weeks);
+		var dateString = formatDate(dateMillis);
 		console.log("Commits since: "+dateString);
 		plussaGuiGitlabRest.getCommitHistory(plussaGuiSettings.activeProjectMeta.id, dateString, function(result) {
 			plussaGuiFileTreeGenerator.buildCommitListing('#plussaGuiCommitListTarget', result);
+		});
+	});
+
+	/*
+	 * Rename a project repository file. Saves also the file content.
+	 * TODO: The gui implementation in index.html AND data fetching AND data validation AND gui update afterwards
+	 */
+	$("#plussaGuiRenameFile").click(function() {
+		var projectMeta = plussaGuiSettings.activeProjectMeta;
+		var oldFilePath = "";
+		var newFilePath = "";
+		var content = $("#markItUp").val();
+		plussaGuiGitlabRest.moveFile(projectMeta.id, projectMeta.default_branch, oldFilePath, newFilePath, content, function() {
+			plussaGuiSettings.successCallback("Renamed file " + oldFilePath + " to " + newFilePath);
+			plussaGuiFileManager.updateAfterFileDelete(projectMeta.id, oldFilePath);
+			plussaGuiFileManager.updateAfterFileSave(projectMeta.id, newFilePath, content);
+			// TODO: jQuery File Tree update in file-tree-generator.js
 		});
 	});
 

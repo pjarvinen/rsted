@@ -22,6 +22,7 @@ var plussaGuiFileTreeGenerator = (function() {
 
   /*
    * Generates HTML code for jQuery File Tree Plugin.
+   * This returns HTML for one folder at a time.
    */
   var generateFileTreeHTML = function(fileTree) {
     var fileTreeHTML = "";
@@ -87,6 +88,10 @@ var plussaGuiFileTreeGenerator = (function() {
     }
   }
 
+  /* Updates the file tree after a new folder was added to the tree
+   * along with a new file addition.
+   * TODO: Open the folder that the new file was created in.
+   */
   var updateAfterFolderAddition = function(projectId, parentData, fileData) {
     if(!parentData) {
       induceProjectOpenClick(projectId);
@@ -96,11 +101,18 @@ var plussaGuiFileTreeGenerator = (function() {
     }
   }
 
+  /* Builds a basic Bootstrap table listing of GitLab project commit data.
+   * Date output format is d.m.YYYY HH:MM
+   */
   var buildCommitListing = function(target, listingJSON) {
+    var itemDate = {};
     var result = '<table id="plussaGuiCommitListing" class="table"><thead><tr><th scope="col">#</th><th scope="col">Date</th><th scope="col">Action</th><th scope="col">Author</th></tr></thead><tbody>';
     for(item in listingJSON) {
       result += '<tr><th scope="row">' + (parseInt(item) + 1) + '</th>';
-      result += '<td>' + listingJSON[item]["created_at"].substr(0, 10) + '</td>';
+      itemDate = new Date(listingJSON[item]["created_at"]);
+      result += '<td>' + itemDate.getDate()+'.'+(itemDate.getMonth()+1)+'.'+itemDate.getFullYear()+' ';
+      result += ((itemDate.getHours()<10)?'0'+itemDate.getHours():itemDate.getHours())+':';
+      result += ((itemDate.getMinutes()<10)?'0'+itemDate.getMinutes():itemDate.getMinutes())+'</td>';
       result += '<td>' + listingJSON[item]["message"] + '</td>';
       result += '<td>' + listingJSON[item]["author_name"] + '</td></tr>';
     }

@@ -1,4 +1,4 @@
-'use strict';
+
 var plussaGuiGitlabRest = (function() {
 
   var init = function(settings) {
@@ -8,7 +8,6 @@ var plussaGuiGitlabRest = (function() {
 
   var privateToken = "";
   var userId = "";
-  var userId = 0;
   var commitActions = [];
 
   function doRestQuery(url, privateToken, method, data, success) {
@@ -102,8 +101,22 @@ var plussaGuiGitlabRest = (function() {
     doRestQuery(url, plussaGuiGitlabRest.privateToken, "PUT", commitData, callback);
   }
 
-  var moveFile = function() {
-
+  var moveFile = function(projectId, branch, oldFilePath, newFilePath, content, callback) {
+    var url = plussaGuiGitlabRest.baseUrl + "projects/" + projectId + "/repository/commits";
+    var commitData = {
+      branch: branch,
+      commit_message: "Renamed file: "+oldFilePath+ " to: "+newFilePath,
+      actions: [
+        {
+          action: "move",
+          file_path: newFilePath,
+          previous_path: oldFilePath,
+          content: btoa(content),
+          encoding: "base64",
+        }
+      ]
+    };
+    doRestQuery(url, plussaGuiGitlabRest.privateToken, "POST", commitData, callback);
   }
 
   var deleteFile = function(projectId, branch, filePath, callback) {
@@ -133,7 +146,7 @@ var plussaGuiGitlabRest = (function() {
 
   /*
    * Downloads commit listing since (YYYY-MM-DD) a given day from the
-   * projects default branch. 
+   * projects default branch.
    */
   var getCommitHistory = function(projectId, since, callback) {
     var dateEndSnippet = "T00:00:00Z";

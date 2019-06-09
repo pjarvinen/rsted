@@ -1,10 +1,16 @@
+/*
+ * In order to download a project repository file from a GitLab server, first
+ * the project root folder data and possible subfolders have to be downloaded.
+ * File Manager provides data structures which hold all metadata and
+ * file contents that pertain to the Plussa GUI user session.
+ */
 
 var plussaGuiFileManager = (function() {
 
-  var userProjects = new Map(); // All user projects.
-  var projectJSONs = new Map(); // Root file trees of every loaded user project.
-  var folderJSONs = new Map(); // Project id keys map folder JSON maps, which in turn have folder paths as keys.
-  var fileJSONs = new Map(); // All downloaded file contents with (projectId + filepath) keys.
+  var userProjects = new Map(); // All metadata of user projects. Project Ids as keys.
+  var projectJSONs = new Map(); // Root file trees (folders) of every loaded user project. Project Ids as keys.
+  var folderJSONs = new Map(); // All metadata for project subfolders. Project ids as keys for maps, which in turn have folder paths as keys.
+  var fileJSONs = new Map(); // All downloaded and uploaded file contents with (projectId + filepath) keys.
 
   /* Helper function for sorting files and folders. */
   function compareItems(a, b) {
@@ -67,13 +73,16 @@ var plussaGuiFileManager = (function() {
     }
   }
 
+  /*
+   * Returns a Map structure which has the project's folder paths as keys.
+   */
   function findFoldersForProject(projectId) {
     var projectFolders = folderJSONs.get(projectId);
     if(projectFolders != undefined) {
       return projectFolders; // Map with folder paths as keys
     }
     else {
-      return folder;
+      return false;
     }
   }
 
@@ -199,6 +208,7 @@ var plussaGuiFileManager = (function() {
     }
   }
 
+  // Saves the downloaded project root folder. 
   var saveProjectJSON = function(projectId, fileTreeJSON) {
     projectJSONs.set(projectId, fileTreeJSON);
   }
