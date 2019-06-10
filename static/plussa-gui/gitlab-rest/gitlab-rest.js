@@ -16,15 +16,14 @@ var plussaGuiGitlabRest = (function() {
       // The URL for the request
       url: url,
       encoding: "UTF-8",
-      scriptCharset: "UTF-8",
+      // The type of data we expect back
+      accepts: "application/json;charset=utf-8",
       // The data to send (will be converted to a query string)
       data: JSON.stringify(data),
-      // Whether this is a POST or GET request
       type: method,
-      // The type of data we expect back
-      dataType: "json",
+      //dataType: "json",
       crossDomain: true,
-      contentType: "application/json;charset=utf-8",
+      //contentType: "application/json;charset=utf-8",
       processData: false,
       // Additional header key-value pairs
       headers: {
@@ -146,11 +145,14 @@ var plussaGuiGitlabRest = (function() {
 
   /*
    * Downloads commit listing since (YYYY-MM-DD) a given day from the
-   * projects default branch.
+   * projects default branch. Maximum number of commits on the list is 100.
+   * Pagination is not implemented. For more information see:
+   * https://docs.gitlab.com/ee/api/README.html#pagination
    */
-  var getCommitHistory = function(projectId, since, callback) {
+  var getCommitHistory = function(projectId, branch, since, callback) {
     var dateEndSnippet = "T00:00:00Z";
     var url = plussaGuiGitlabRest.baseUrl + "projects/" + projectId + "/repository/commits?since=" + since + dateEndSnippet;
+    url += "&ref_name=" + branch + "&per_page=100"
     doRestQuery(url, plussaGuiGitlabRest.privateToken, "GET", {}, callback);
   }
 

@@ -476,10 +476,11 @@ $(document).ready(function(){
 
 	/*
 	 * Commit listing shows the commits since the given number of weeks ago.
-	 * The public community server apparently sends only 20 latest commits. More information:
- 	 * https://docs.gitlab.com/ee/api/commits.html
+	 * The public community server sends max.100 items in one post. More information
+ 	 * on pagination: https://docs.gitlab.com/ee/api/README.html#pagination
 	 */
 	$("#plussaGuiShowCommitsLog").click(function (e) {
+		var projectMeta = plussaGuiSettings.activeProjectMeta;
 		var weeks = $('#plussaGuiWeeks').val();
 		if(weeks.length == 0 || parseInt(weeks) == NaN) {
 			weeks = plussaGuiSettings.defaultWeeksForCommitListing;
@@ -490,7 +491,7 @@ $(document).ready(function(){
 		var dateMillis = Date.now() - (604800000 * weeks);
 		var dateString = formatDate(dateMillis);
 		console.log("Commits since: "+dateString);
-		plussaGuiGitlabRest.getCommitHistory(plussaGuiSettings.activeProjectMeta.id, dateString, function(result) {
+		plussaGuiGitlabRest.getCommitHistory(projectMeta.id, projectMeta.default_branch, dateString, function(result) {
 			plussaGuiFileTreeGenerator.buildCommitListing('#plussaGuiCommitListTarget', result);
 		});
 	});
